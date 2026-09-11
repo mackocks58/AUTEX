@@ -38,7 +38,7 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", padding: "16px", position: "relative", background: "var(--bg)" }}>
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", padding: "16px", position: "relative", background: "var(--bg)", overflow: "hidden" }}>
       {/* Glowing orb background */}
       <div className="breathe" style={{ position: "absolute", width: 400, height: 400, background: "radial-gradient(circle, rgba(250, 204, 21, 0.12) 0%, transparent 70%)", borderRadius: "50%", zIndex: 0 }}></div>
       
