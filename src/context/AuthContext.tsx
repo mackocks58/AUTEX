@@ -9,7 +9,8 @@ import {
 } from "react";
 import type { User } from "firebase/auth";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "@/firebase";
+import { ref, get } from "firebase/database";
+import { auth, db } from "@/firebase";
 
 type AuthState = {
   user: User | null;
@@ -33,7 +34,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     const token = await u.getIdTokenResult(true);
-    setIsAdmin(Boolean(token.claims.admin));
+    let hasDbAdmin = false;
+    try {
+      const adminSnap = await get(ref(db, `admins/${u.uid}`));
+      if (adminSnap.exists() && adminSnap.val() === true) {
+        hasDbAdmin = true;
+      } else {
+        const userSnap = await get(ref(db, `users/${u.uid}/role`));
+        if (userSnap.exists() && userSnap.val() === "admin") {
+          hasDbAdmin = true;
+        }
+      }
+    } catch (e) {
+      console.warn("Could not fetch admin status", e);
+    }
+    
+    setIsAdmin(Boolean(token.claims.admin) || hasDbAdmin);
   }, []);
 
   useEffect(() => {
@@ -41,7 +57,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(u);
       if (u) {
         const token = await u.getIdTokenResult(true);
-        setIsAdmin(Boolean(token.claims.admin));
+        let hasDbAdmin = false;
+        try {
+          const adminSnap = await get(ref(db, `admins/${u.uid}`));
+          if (adminSnap.exists() && adminSnap.val() === true) {
+            hasDbAdmin = true;
+          } else {
+            const userSnap = await get(ref(db, `users/${u.uid}/role`));
+            if (userSnap.exists() && userSnap.val() === "admin") {
+              hasDbAdmin = true;
+            }
+          }
+        } catch (e) {
+          console.warn("Could not fetch admin status", e);
+        }
+        setIsAdmin(Boolean(token.claims.admin) || hasDbAdmin);
       } else {
         setIsAdmin(false);
       }

@@ -7,11 +7,26 @@ import { Link } from "react-router-dom";
 import type { MovieGroup } from "@/types";
 
 const DEFAULT_GROUPS: MovieGroup[] = [
-  { id: "connection-bongo", name: "Connection Za Bongo", thumbnail: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=1000", amount: 1000, currency: "TZS", description: "The most trending bongo connections and dramas.", createdAt: 1713744000000 },
-  { id: "bongo-wiki-hii", name: "Bongo Wiki Hii", thumbnail: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=1000", amount: 500, currency: "TZS", description: "New Tanzanian movies released this week.", createdAt: 1713744000000 },
-  { id: "action-movies", name: "Action Movies", thumbnail: "https://images.unsplash.com/photo-1535016120720-40c646bebbbb?auto=format&fit=crop&q=80&w=1000", amount: 1500, currency: "TZS", description: "Hollywood and International high-octane action.", createdAt: 1713744000000 },
-  { id: "seasons", name: "Seasons", thumbnail: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&q=80&w=1000", amount: 2000, currency: "TZS", description: "Complete series and trending TV seasons.", createdAt: 1713744000000 },
-  { id: "connection-tia", name: "Connection TIA", thumbnail: "https://images.unsplash.com/photo-1523050853063-bd75160b332a?auto=format&fit=crop&q=80&w=1000", amount: 1000, currency: "TZS", description: "Exclusive University lifestyle and campus stories.", createdAt: 1713744000000 }
+  { id: 'm1', name: 'Lethal Strike', thumbnail: 'https://images.unsplash.com/photo-1506501139174-099022460929?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'A retired special forces operative must return to the field.', createdAt: 1713744000000 },
+  { id: 'm2', name: 'Code Red: Extraction', thumbnail: 'https://images.unsplash.com/photo-1535016120720-40c646bebbbb?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'A daring rescue mission deep behind enemy lines.', createdAt: 1713744000000 },
+  { id: 'm3', name: 'The Last Cartel', thumbnail: 'https://images.unsplash.com/photo-1587843825866-23136209e51c?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Taking down the biggest drug syndicate in South America.', createdAt: 1713744000000 },
+  { id: 'm4', name: 'Sniper\'s Nest', thumbnail: 'https://images.unsplash.com/photo-1558712613-2d2c12d4a234?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'One man, one rifle, and a city under siege.', createdAt: 1713744000000 },
+  { id: 'm5', name: 'Urban Warfare', thumbnail: 'https://images.unsplash.com/photo-1614030424754-24d0e37ce739?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Street-level combat between rival gangs and SWAT.', createdAt: 1713744000000 },
+  { id: 'm6', name: 'Midnight Chase', thumbnail: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'High-speed pursuits across the neon-lit city streets.', createdAt: 1713744000000 },
+  { id: 'm7', name: 'Rogue Agent', thumbnail: 'https://images.unsplash.com/photo-1517436073-3b1b1b4eb640?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'A spy goes off the grid to uncover a global conspiracy.', createdAt: 1713744000000 },
+  { id: 'm8', name: 'Blood & Chrome', thumbnail: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Undercover cops racing stolen supercars.', createdAt: 1713744000000 },
+  { id: 'm9', name: 'The Syndicate', thumbnail: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Infiltrating the mafia from the inside out.', createdAt: 1713744000000 },
+  { id: 'm10', name: 'Blackout Protocol', thumbnail: 'https://images.unsplash.com/photo-1603598516001-c8a7c2f0f421?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'When the city loses power, the purge begins.', createdAt: 1713744000000 },
+  { id: 'm11', name: 'Hostage Zero', thumbnail: 'https://images.unsplash.com/photo-1605333069150-13f5fb474d20?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Negotiations fail. It\'s time for aggressive action.', createdAt: 1713744000000 },
+  { id: 'm12', name: 'Mercenary Instinct', thumbnail: 'https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Hired guns fight for survival in a hostile warzone.', createdAt: 1713744000000 },
+  { id: 'm13', name: 'Fugitive\'s Run', thumbnail: 'https://images.unsplash.com/photo-1519520443-41bbd5982121?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Framed for murder, he has 24 hours to clear his name.', createdAt: 1713744000000 },
+  { id: 'm14', name: 'Shadow Operative', thumbnail: 'https://images.unsplash.com/photo-1618239062369-da3570de6b83?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Assassinations and stealth in the modern era.', createdAt: 1713744000000 },
+  { id: 'm15', name: 'Undercover Takedown', thumbnail: 'https://images.unsplash.com/photo-1506501139174-099022460929?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Deep cover operations go horribly wrong.', createdAt: 1713744000000 },
+  { id: 'm16', name: 'Cartel Wars', thumbnail: 'https://images.unsplash.com/photo-1587843825866-23136209e51c?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Borderline justice in a lawless land.', createdAt: 1713744000000 },
+  { id: 'm17', name: 'Bulletproof', thumbnail: 'https://images.unsplash.com/photo-1605333069150-13f5fb474d20?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'A heist crew attempts the impossible bank robbery.', createdAt: 1713744000000 },
+  { id: 'm18', name: 'Iron Fist', thumbnail: 'https://images.unsplash.com/photo-1558712613-2d2c12d4a234?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Underground martial arts tournament to the death.', createdAt: 1713744000000 },
+  { id: 'm19', name: 'Ghost Protocol', thumbnail: 'https://images.unsplash.com/photo-1535016120720-40c646bebbbb?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Erased from existence, they fight for the truth.', createdAt: 1713744000000 },
+  { id: 'm20', name: 'Final Stand', thumbnail: 'https://images.unsplash.com/photo-1614030424754-24d0e37ce739?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'The last line of defense against an invading army.', createdAt: 1713744000000 }
 ];
 
 export default function Movies() {
@@ -73,7 +88,7 @@ export default function Movies() {
         <p className="muted" style={{ margin: "8px 0 16px 0" }}>Unlock exclusive movie connections and the latest blockbusters.</p>
       </div>
 
-      <div className="grid cols-3 cols-3-mobile" style={{ gap: 24 }}>
+      <div className="grid cols-2 cols-2-mobile" style={{ gap: 16 }}>
         {groups.map((group) => {
           const unlocked = isPurchased(group.id!);
           return (
