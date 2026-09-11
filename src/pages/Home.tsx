@@ -4,6 +4,7 @@ import { onValue, ref } from "firebase/database";
 import { db } from "@/firebase";
 import { Shell } from "@/components/Shell";
 import { TeamDetailsModal } from "@/components/TeamDetailsModal";
+import { useLanguage } from "@/context/LanguageContext";
 
 export type Match = {
   id: string;
@@ -24,6 +25,7 @@ export type Match = {
 };
 
 export default function Home() {
+  const { t } = useLanguage();
   const [firebaseMatches, setFirebaseMatches] = useState<Record<string, Match> | null>(null);
   const [apiMatches, setApiMatches] = useState<Match[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -121,20 +123,20 @@ export default function Home() {
     <Shell>
       <div style={{ marginBottom: 24, textAlign: "center" }}>
         <h1 className="page-title" style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
-          <span className="breathe" style={{ display: "inline-block", color: "var(--accent)" }}>⚽</span> Football Matches
+          <span className="breathe" style={{ display: "inline-block", color: "var(--accent)" }}>⚽</span> {t.footballMatches}
         </h1>
-        <p className="muted" style={{ margin: "0 0 16px 0" }}>Top tier football action.</p>
+        <p className="muted" style={{ margin: "0 0 16px 0" }}>{t.topTierFootball}</p>
         <div className="row" style={{ gap: 8, justifyContent: "center" }}>
-          <button className={`btn ${tab === "live" ? "" : "btn-ghost"}`} onClick={() => setTab("live")} style={{ borderRadius: 999, padding: "8px 20px" }}>Live</button>
-          <button className={`btn ${tab === "today" ? "" : "btn-ghost"}`} onClick={() => setTab("today")} style={{ borderRadius: 999, padding: "8px 20px" }}>Today</button>
-          <button className={`btn ${tab === "tomorrow" ? "" : "btn-ghost"}`} onClick={() => setTab("tomorrow")} style={{ borderRadius: 999, padding: "8px 20px" }}>Tomorrow</button>
+          <button className={`btn ${tab === "live" ? "" : "btn-ghost"}`} onClick={() => setTab("live")} style={{ borderRadius: 999, padding: "8px 20px" }}>{t.live}</button>
+          <button className={`btn ${tab === "today" ? "" : "btn-ghost"}`} onClick={() => setTab("today")} style={{ borderRadius: 999, padding: "8px 20px" }}>{t.today}</button>
+          <button className={`btn ${tab === "tomorrow" ? "" : "btn-ghost"}`} onClick={() => setTab("tomorrow")} style={{ borderRadius: 999, padding: "8px 20px" }}>{t.tomorrow}</button>
         </div>
       </div>
 
       {loading ? (
-        <div style={{ textAlign: "center", padding: 40, color: "var(--accent)" }}>Loading live matches...</div>
+        <div style={{ textAlign: "center", padding: 40, color: "var(--accent)" }}>{t.loadingMatches}</div>
       ) : matches.length === 0 ? (
-        <div className="alert" style={{ textAlign: "center" }}>No matches found. Admins will update the daily matches soon!</div>
+        <div className="alert" style={{ textAlign: "center" }}>{t.noMatches}</div>
       ) : (
         <div className="grid cols-2" style={{ gap: 20 }}>
           {matches.map((m) => (
@@ -203,7 +205,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <button className="btn" style={{ width: "100%", padding: "10px", fontWeight: 600 }}>View Odds & Premium Tips</button>
+                <button className="btn" style={{ width: "100%", padding: "10px", fontWeight: 600 }}>{t.viewOdds}</button>
               </div>
             </div>
           ))}

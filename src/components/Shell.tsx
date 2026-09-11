@@ -2,9 +2,11 @@ import type { ReactNode } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Navbar } from "./Navbar";
 import { BottomNav } from "./BottomNav";
+import { useLanguage } from "@/context/LanguageContext";
 
 export function Shell({ children }: { children: ReactNode }) {
   const [params, setParams] = useSearchParams();
+  const { t } = useLanguage();
   const query = params.get("q") || "";
 
   return (
@@ -15,7 +17,7 @@ export function Shell({ children }: { children: ReactNode }) {
         <input 
           type="text" 
           className="search-input" 
-          placeholder="Search premium betslips, matches, or codes..." 
+          placeholder={t.searchPlaceholder} 
           value={query}
           onChange={(e) => {
             const val = e.target.value;
