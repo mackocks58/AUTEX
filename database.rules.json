@@ -1,80 +1,175 @@
 {
   "rules": {
+    ".read": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)",
+    ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)",
+
     "betslips": {
       ".read": true,
       "$id": {
-        ".write": "auth != null && auth.token.admin === true"
+        ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
       }
     },
+
     "betslipCodes": {
       "$id": {
-        ".read": "auth != null && (auth.token.admin === true || root.child('purchases').child(auth.uid).child($id).child('status').val() === 'completed')",
-        ".write": "auth != null && auth.token.admin === true"
+        ".read": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true || root.child('purchases').child(auth.uid).child($id).child('status').val() === 'completed')",
+        ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
       }
     },
+
     "purchases": {
       "$uid": {
         "$betslipId": {
-          ".read": "auth != null && auth.uid === $uid",
-          ".write": false
+          ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)",
+          ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
         }
       }
     },
+
     "checkoutSessions": {
-      ".read": false,
-      ".write": false
+      ".read": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)",
+      ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
     },
+
+    "withdrawals": {
+      ".indexOn": ["uid"],
+      ".read": "auth != null",
+      "$id": {
+        ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true || newData.child('uid').val() === auth.uid || data.child('uid').val() === auth.uid)"
+      }
+    },
+
+    "manualPayments": {
+      ".indexOn": ["uid", "status"],
+      ".read": "auth != null",
+      "$id": {
+        ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true || newData.child('uid').val() === auth.uid || data.child('uid').val() === auth.uid)"
+      }
+    },
+
     "userPayments": {
       "$uid": {
-        ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true)",
-        ".write": false
+        ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
       }
     },
+
     "supportTickets": {
       "$uid": {
-        ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true)",
+        ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)",
         "$ticketId": {
-          ".write": "auth != null && (auth.uid === $uid || auth.token.admin === true)"
+          ".write": "auth != null && (auth.uid === $uid || auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
         }
       }
     },
+
     "users": {
+      ".read": "auth != null",
+      ".indexOn": ["affiliateCode", "referredBy", "username", "usernameLowercase"],
       "$uid": {
-        ".read": "auth != null",
-        ".write": "auth != null && auth.uid === $uid"
+        ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true || auth.uid === $uid)"
       }
     },
+
+    "admins": {
+      ".read": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)",
+      ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
+    },
+
+    "commissions": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
+      }
+    },
+
+    "settings": {
+      ".read": true,
+      ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
+    },
+
+    "quizzes": {
+      ".read": "auth != null",
+      ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
+    },
+
+    "userQuizzes": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && (auth.uid === $uid || auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
+      }
+    },
+
     "referrals": {
+      ".read": "auth != null",
       "$code": {
-        ".read": "auth != null && root.child('users').child(auth.uid).child('affiliateCode').val() === $code",
         ".write": "auth != null"
       }
     },
+
     "chatChannels": {
       ".read": "auth != null",
       ".write": "auth != null"
     },
+
     "chatMessages": {
       "$channelId": {
         ".read": "auth != null",
         ".write": "auth != null"
       }
     },
+
     "userFollowing": {
       "$uid": {
         ".read": "auth != null",
-        ".write": "auth != null && auth.uid === $uid"
+        ".write": "auth != null && (auth.uid === $uid || auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
       }
     },
+
     "notifications": {
       ".read": "auth != null",
-      ".write": "auth != null && auth.token.admin === true"
+      ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
     },
+
     "userReads": {
       "$uid": {
-        ".read": "auth != null && auth.uid === $uid",
-        ".write": "auth != null && auth.uid === $uid"
+        ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null && (auth.uid === $uid || auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
       }
+    },
+
+    "userUnread": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null"
+      }
+    },
+
+    "bundles": {
+      ".read": true,
+      ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
+    },
+
+    "bundleRequests": {
+      ".read": "auth != null",
+      "$id": {
+        ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true || newData.child('uid').val() === auth.uid)"
+      }
+    },
+
+    "movieGroups": {
+      ".read": true,
+      ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
+    },
+
+    "movies": {
+      ".read": true,
+      ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
+    },
+
+    "liveMatches": {
+      ".read": true,
+      ".write": "auth != null && (auth.token.admin === true || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('admins').child(auth.uid).val() === true)"
     }
   }
 }

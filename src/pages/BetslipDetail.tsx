@@ -72,6 +72,7 @@ export default function BetslipDetail() {
   const [payBusy, setPayBusy] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [accessMode, setAccessMode] = useState<"free" | "paid">("paid");
 
   const [copyStatus, setCopyStatus] = useState<string | null>(null);
 
@@ -111,7 +112,7 @@ export default function BetslipDetail() {
   }, [id, user]);
 
   useEffect(() => {
-    if (!id || !user || purchase?.status !== "completed") {
+    if (!id || !user || (accessMode !== "free" && purchase?.status !== "completed")) {
       setCode(null);
       return;
     }
@@ -124,7 +125,16 @@ export default function BetslipDetail() {
       },
       () => setCode(null)
     );
-  }, [id, user, purchase?.status]);
+  }, [id, user, purchase?.status, accessMode]);
+
+  // Listen to global access mode setting
+  useEffect(() => {
+    const r = ref(db, "settings/betslipsAccessMode");
+    return onValue(r, (snap) => {
+      const val = snap.val();
+      setAccessMode(val === "free" ? "free" : "paid");
+    });
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -138,7 +148,8 @@ export default function BetslipDetail() {
     return Date.now() > Number(slip.expiresAt);
   }, [slip]);
 
-  const unlocked = purchase?.status === "completed";
+  // In free mode, treat all logged-in users as unlocked
+  const unlocked = accessMode === "free" ? !!user : purchase?.status === "completed";
 
   async function startPayment() {
     if (!id || !user) return;
@@ -277,7 +288,29 @@ export default function BetslipDetail() {
             </div>
           )}
 
-          {user && !unlocked && (
+          {/* Free access banner */}
+          {accessMode === "free" && user && (
+            <div style={{
+              padding: "14px 18px",
+              borderRadius: 14,
+              background: "linear-gradient(135deg, rgba(16,185,129,0.14), rgba(4,120,87,0.07))",
+              border: "1px solid rgba(16,185,129,0.35)",
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+            }}>
+              <span style={{ fontSize: 26 }}>🆓</span>
+              <div>
+                <div style={{ fontWeight: 800, color: "var(--accent)", fontSize: 15 }}>Free Access Enabled</div>
+                <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 2 }}>
+                  The admin has made all betslips free. Your code is unlocked below!
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Payment form — only shown in paid mode when not yet purchased */}
+          {user && !unlocked && accessMode === "paid" && (
             <div className="card">
               <div className="card-body">
                 <h2 style={{ margin: "0 0 10px", fontSize: 18 }}>Pay with PalmPesa</h2>

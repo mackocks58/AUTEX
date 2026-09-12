@@ -112,6 +112,13 @@ export default function Account() {
                   {isAdmin ? t.administrator : t.standardUser}
                 </span>
               </div>
+              {isAdmin && (
+                <div style={{ marginTop: 16 }}>
+                  <Link to="/admin" className="btn" style={{ display: "block", textAlign: "center", background: "linear-gradient(135deg, rgba(52,211,153,0.15), rgba(4,120,87,0.3))", borderColor: "rgba(52,211,153,0.5)", color: "var(--accent2)", fontWeight: 700, padding: "10px" }}>
+                    🚀 Open Admin Dashboard
+                  </Link>
+                </div>
+              )}
             </div>
 
             <button className="btn btn-danger" style={{ width: "100%", padding: "12px" }} onClick={() => void logout()}>

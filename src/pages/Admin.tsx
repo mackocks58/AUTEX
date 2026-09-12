@@ -12,6 +12,7 @@ import { storagePathFromDownloadUrl } from "@/lib/storagePath";
 import { AdminMatches } from "./AdminMatches";
 import { AdminNotifications } from "./AdminNotifications";
 import { AdminMovies } from "./AdminMovies";
+import { AdminSettings } from "./AdminSettings";
 
 type Row = Betslip & { id: string };
 
@@ -192,25 +193,60 @@ export default function Admin() {
     );
   }
 
-  const [tab, setTab] = useState<"betslips" | "matches" | "notifications" | "movies">("betslips");
+  const [tab, setTab] = useState<"betslips" | "matches" | "notifications" | "movies" | "settings">("betslips");
+
+  const TABS: { key: typeof tab; label: string; icon: string }[] = [
+    { key: "betslips",      label: "Betslips",      icon: "🎟️" },
+    { key: "movies",        label: "Movies",        icon: "🎬" },
+    { key: "matches",       label: "Matches",       icon: "⚽" },
+    { key: "notifications", label: "Alerts",        icon: "🔔" },
+    { key: "settings",      label: "Settings",      icon: "⚙️" },
+  ];
 
   return (
     <Shell>
-      <div className="row" style={{ justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-        <h1 className="page-title" style={{ margin: 0 }}>Admin Panel</h1>
-        <div className="row" style={{ gap: 8 }}>
-          <button className={`btn ${tab === "betslips" ? "" : "btn-ghost"}`} onClick={() => setTab("betslips")}>
-            Betslips
-          </button>
-          <button className={`btn ${tab === "movies" ? "" : "btn-ghost"}`} onClick={() => setTab("movies")}>
-            Movies
-          </button>
-          <button className={`btn ${tab === "matches" ? "" : "btn-ghost"}`} onClick={() => setTab("matches")}>
-            Matches
-          </button>
-          <button className={`btn ${tab === "notifications" ? "" : "btn-ghost"}`} onClick={() => setTab("notifications")}>
-            Notifications
-          </button>
+      {/* Header */}
+      <div style={{ marginBottom: 16 }}>
+        <h1 className="page-title" style={{ margin: "0 0 14px", fontSize: "clamp(20px, 5vw, 28px)" }}>⚡ Admin Panel</h1>
+
+        {/* Mobile-friendly scrollable tab bar */}
+        <div style={{
+          display: "flex",
+          gap: 8,
+          overflowX: "auto",
+          paddingBottom: 4,
+          WebkitOverflowScrolling: "touch" as any,
+          scrollbarWidth: "none" as any,
+          msOverflowStyle: "none" as any,
+        }}>
+          {TABS.map(t => (
+            <button
+              key={t.key}
+              onClick={() => setTab(t.key)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "8px 16px",
+                borderRadius: 20,
+                border: `1px solid ${tab === t.key ? "var(--accent)" : "var(--stroke)"}`,
+                background: tab === t.key
+                  ? "linear-gradient(135deg, rgba(16,185,129,0.18), rgba(4,120,87,0.08))"
+                  : "rgba(255,255,255,0.03)",
+                color: tab === t.key ? "var(--accent)" : "var(--muted)",
+                fontWeight: tab === t.key ? 700 : 500,
+                fontSize: 13,
+                whiteSpace: "nowrap",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                flexShrink: 0,
+                boxShadow: tab === t.key ? "0 0 10px rgba(16,185,129,0.2)" : "none",
+              }}
+            >
+              <span>{t.icon}</span>
+              {t.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -304,8 +340,10 @@ export default function Admin() {
         <AdminMovies />
       ) : tab === "matches" ? (
         <AdminMatches />
-      ) : (
+      ) : tab === "notifications" ? (
         <AdminNotifications />
+      ) : (
+        <AdminSettings />
       )}
     </Shell>
   );

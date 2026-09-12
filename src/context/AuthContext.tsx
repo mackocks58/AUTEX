@@ -35,18 +35,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     const token = await u.getIdTokenResult(true);
     let hasDbAdmin = false;
+    
+    // Check users node
     try {
-      const adminSnap = await get(ref(db, `admins/${u.uid}`));
-      if (adminSnap.exists() && adminSnap.val() === true) {
+      const userSnap = await get(ref(db, `users/${u.uid}/role`));
+      if (userSnap.exists() && String(userSnap.val()).toLowerCase() === "admin") {
         hasDbAdmin = true;
-      } else {
-        const userSnap = await get(ref(db, `users/${u.uid}/role`));
-        if (userSnap.exists() && userSnap.val() === "admin") {
-          hasDbAdmin = true;
-        }
       }
     } catch (e) {
-      console.warn("Could not fetch admin status", e);
+      console.warn("Could not fetch user role", e);
+    }
+
+    // Check admins node (might fail if rules don't allow it)
+    if (!hasDbAdmin) {
+      try {
+        const adminSnap = await get(ref(db, `admins/${u.uid}`));
+        if (adminSnap.exists() && adminSnap.val() === true) {
+          hasDbAdmin = true;
+        }
+      } catch (e) {
+        // Silently ignore if admins node doesn't exist or denies permission
+      }
     }
     
     setIsAdmin(Boolean(token.claims.admin) || hasDbAdmin);
@@ -58,18 +67,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (u) {
         const token = await u.getIdTokenResult(true);
         let hasDbAdmin = false;
+        
         try {
-          const adminSnap = await get(ref(db, `admins/${u.uid}`));
-          if (adminSnap.exists() && adminSnap.val() === true) {
+          const userSnap = await get(ref(db, `users/${u.uid}/role`));
+          if (userSnap.exists() && String(userSnap.val()).toLowerCase() === "admin") {
             hasDbAdmin = true;
-          } else {
-            const userSnap = await get(ref(db, `users/${u.uid}/role`));
-            if (userSnap.exists() && userSnap.val() === "admin") {
-              hasDbAdmin = true;
-            }
           }
         } catch (e) {
-          console.warn("Could not fetch admin status", e);
+          console.warn("Could not fetch user role", e);
+        }
+
+        if (!hasDbAdmin) {
+          try {
+            const adminSnap = await get(ref(db, `admins/${u.uid}`));
+            if (adminSnap.exists() && adminSnap.val() === true) {
+              hasDbAdmin = true;
+            }
+          } catch (e) {
+            // Silently ignore permission errors here
+          }
         }
         setIsAdmin(Boolean(token.claims.admin) || hasDbAdmin);
       } else {

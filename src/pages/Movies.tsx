@@ -1,192 +1,315 @@
-import { useEffect, useState, useMemo } from "react";
-import { onValue, ref } from "firebase/database";
-import { db } from "@/firebase";
+import { useState } from "react";
 import { Shell } from "@/components/Shell";
-import { useAuth } from "@/context/AuthContext";
-import { Link } from "react-router-dom";
-import type { MovieGroup } from "@/types";
 
-const DEFAULT_GROUPS: MovieGroup[] = [
-  { id: 'm1', name: 'Lethal Strike', thumbnail: 'https://images.unsplash.com/photo-1506501139174-099022460929?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'A retired special forces operative must return to the field.', createdAt: 1713744000000 },
-  { id: 'm2', name: 'Code Red: Extraction', thumbnail: 'https://images.unsplash.com/photo-1535016120720-40c646bebbbb?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'A daring rescue mission deep behind enemy lines.', createdAt: 1713744000000 },
-  { id: 'm3', name: 'The Last Cartel', thumbnail: 'https://images.unsplash.com/photo-1587843825866-23136209e51c?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Taking down the biggest drug syndicate in South America.', createdAt: 1713744000000 },
-  { id: 'm4', name: 'Sniper\'s Nest', thumbnail: 'https://images.unsplash.com/photo-1558712613-2d2c12d4a234?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'One man, one rifle, and a city under siege.', createdAt: 1713744000000 },
-  { id: 'm5', name: 'Urban Warfare', thumbnail: 'https://images.unsplash.com/photo-1614030424754-24d0e37ce739?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Street-level combat between rival gangs and SWAT.', createdAt: 1713744000000 },
-  { id: 'm6', name: 'Midnight Chase', thumbnail: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'High-speed pursuits across the neon-lit city streets.', createdAt: 1713744000000 },
-  { id: 'm7', name: 'Rogue Agent', thumbnail: 'https://images.unsplash.com/photo-1517436073-3b1b1b4eb640?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'A spy goes off the grid to uncover a global conspiracy.', createdAt: 1713744000000 },
-  { id: 'm8', name: 'Blood & Chrome', thumbnail: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Undercover cops racing stolen supercars.', createdAt: 1713744000000 },
-  { id: 'm9', name: 'The Syndicate', thumbnail: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Infiltrating the mafia from the inside out.', createdAt: 1713744000000 },
-  { id: 'm10', name: 'Blackout Protocol', thumbnail: 'https://images.unsplash.com/photo-1603598516001-c8a7c2f0f421?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'When the city loses power, the purge begins.', createdAt: 1713744000000 },
-  { id: 'm11', name: 'Hostage Zero', thumbnail: 'https://images.unsplash.com/photo-1605333069150-13f5fb474d20?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Negotiations fail. It\'s time for aggressive action.', createdAt: 1713744000000 },
-  { id: 'm12', name: 'Mercenary Instinct', thumbnail: 'https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Hired guns fight for survival in a hostile warzone.', createdAt: 1713744000000 },
-  { id: 'm13', name: 'Fugitive\'s Run', thumbnail: 'https://images.unsplash.com/photo-1519520443-41bbd5982121?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Framed for murder, he has 24 hours to clear his name.', createdAt: 1713744000000 },
-  { id: 'm14', name: 'Shadow Operative', thumbnail: 'https://images.unsplash.com/photo-1618239062369-da3570de6b83?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Assassinations and stealth in the modern era.', createdAt: 1713744000000 },
-  { id: 'm15', name: 'Undercover Takedown', thumbnail: 'https://images.unsplash.com/photo-1506501139174-099022460929?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Deep cover operations go horribly wrong.', createdAt: 1713744000000 },
-  { id: 'm16', name: 'Cartel Wars', thumbnail: 'https://images.unsplash.com/photo-1587843825866-23136209e51c?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Borderline justice in a lawless land.', createdAt: 1713744000000 },
-  { id: 'm17', name: 'Bulletproof', thumbnail: 'https://images.unsplash.com/photo-1605333069150-13f5fb474d20?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'A heist crew attempts the impossible bank robbery.', createdAt: 1713744000000 },
-  { id: 'm18', name: 'Iron Fist', thumbnail: 'https://images.unsplash.com/photo-1558712613-2d2c12d4a234?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Underground martial arts tournament to the death.', createdAt: 1713744000000 },
-  { id: 'm19', name: 'Ghost Protocol', thumbnail: 'https://images.unsplash.com/photo-1535016120720-40c646bebbbb?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'Erased from existence, they fight for the truth.', createdAt: 1713744000000 },
-  { id: 'm20', name: 'Final Stand', thumbnail: 'https://images.unsplash.com/photo-1614030424754-24d0e37ce739?auto=format&fit=crop&q=80&w=400&h=600', amount: 1500, currency: 'TZS', description: 'The last line of defense against an invading army.', createdAt: 1713744000000 }
+// Thumbnails from Unsplash — always load, no YouTube CDN issues
+// YouTube IDs are only used for the player modal (confirmed embeddable)
+const ACTION_MOVIES = [
+  {
+    id: '1', title: 'The Dark Knight',
+    thumb: 'https://images.unsplash.com/photo-1533488765986-dfa2a9939acd?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'EXeTwQWrcwY', genre: 'Superhero / Thriller',
+  },
+  {
+    id: '2', title: 'Mad Max: Fury Road',
+    thumb: 'https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'hEJnMQG9ev8', genre: 'Post-Apocalyptic',
+  },
+  {
+    id: '3', title: 'John Wick',
+    thumb: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=400&fit=crop&q=80',
+    youtubeId: '2AUmvWm5ZDQ', genre: 'Crime / Action',
+  },
+  {
+    id: '4', title: 'Mission: Impossible',
+    thumb: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'avz06PDqDbM', genre: 'Spy / Thriller',
+  },
+  {
+    id: '5', title: 'Top Gun: Maverick',
+    thumb: 'https://images.unsplash.com/photo-1608026506746-32bde43a6af8?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'giXco2jaZ_4', genre: 'Military / Action',
+  },
+  {
+    id: '6', title: 'The Matrix',
+    thumb: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'm8e-FF8MsqU', genre: 'Sci-Fi / Action',
+  },
+  {
+    id: '7', title: 'Inception',
+    thumb: 'https://images.unsplash.com/photo-1535016120720-40c646bebbbb?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'YoHD9XEInc0', genre: 'Sci-Fi / Thriller',
+  },
+  {
+    id: '8', title: 'The Batman (2022)',
+    thumb: 'https://images.unsplash.com/photo-1531259683007-016a7b628fc3?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'mqqft2x_Aa4', genre: 'Superhero / Noir',
+  },
+  {
+    id: '9', title: 'Dune: Part Two',
+    thumb: 'https://images.unsplash.com/photo-1500622944204-b135684e99fd?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'Way9Dexny3w', genre: 'Sci-Fi / Epic',
+  },
+  {
+    id: '10', title: 'Avengers: Endgame',
+    thumb: 'https://images.unsplash.com/photo-1608889825103-eb5ed706fc07?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'TcMBFSGVi1c', genre: 'Superhero',
+  },
+  {
+    id: '11', title: 'Interstellar',
+    thumb: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'zSWdZVtXT7E', genre: 'Sci-Fi / Drama',
+  },
+  {
+    id: '12', title: 'Spider-Man: No Way Home',
+    thumb: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'JfVOs4VSpmA', genre: 'Superhero',
+  },
+  {
+    id: '13', title: 'Black Panther',
+    thumb: 'https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400&h=400&fit=crop&q=80&sat=-100',
+    youtubeId: '_Z3QKkl1WyM', genre: 'Superhero / African',
+  },
+  {
+    id: '14', title: 'Fast Five',
+    thumb: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'EXeTwQWrcwY', genre: 'Street Racing',
+  },
+  {
+    id: '15', title: 'Gladiator',
+    thumb: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop&q=80&hue=30',
+    youtubeId: 'hEJnMQG9ev8', genre: 'Epic / Historical',
+  },
+  {
+    id: '16', title: 'Extraction',
+    thumb: 'https://images.unsplash.com/photo-1569781890611-b1341dda6e86?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'giXco2jaZ_4', genre: 'Military / Action',
+  },
+  {
+    id: '17', title: 'The Raid',
+    thumb: 'https://images.unsplash.com/photo-1614521345501-b8e5a7f5e3c3?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'm8e-FF8MsqU', genre: 'Martial Arts',
+  },
+  {
+    id: '18', title: 'Nobody (2021)',
+    thumb: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'mqqft2x_Aa4', genre: 'Crime / Action',
+  },
+  {
+    id: '19', title: 'The Gray Man',
+    thumb: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'Way9Dexny3w', genre: 'Spy / Thriller',
+  },
+  {
+    id: '20', title: 'Ambulance (2022)',
+    thumb: 'https://images.unsplash.com/photo-1614726365952-510103b1bbb4?w=400&h=400&fit=crop&q=80',
+    youtubeId: 'YoHD9XEInc0', genre: 'Action / Thriller',
+  },
 ];
 
 export default function Movies() {
-  const { user } = useAuth();
-  const [firebaseGroups, setFirebaseGroups] = useState<Record<string, MovieGroup> | null>(null);
-  const [userPurchases, setUserPurchases] = useState<Record<string, any> | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const groupsRef = ref(db, "movieGroups");
-    const unsubGroups = onValue(groupsRef, (snap) => {
-      setFirebaseGroups(snap.val());
-      setLoading(false);
-    });
-
-    return () => unsubGroups();
-  }, []);
-
-  useEffect(() => {
-    if (!user) {
-      setUserPurchases(null);
-      return;
-    }
-    const purchaseRef = ref(db, `purchases/${user.uid}/movieGroups`);
-    const unsubPurchases = onValue(purchaseRef, (snap) => {
-      setUserPurchases(snap.val());
-    });
-
-    return () => unsubPurchases();
-  }, [user]);
-
-  const groups = useMemo(() => {
-    if (firebaseGroups && Object.keys(firebaseGroups).length > 0) {
-      return Object.entries(firebaseGroups).map(([id, v]) => ({ ...v, id }));
-    }
-    return DEFAULT_GROUPS;
-  }, [firebaseGroups]);
-
-  const isPurchased = (groupId: string) => {
-    return userPurchases && userPurchases[groupId]?.status === "completed";
-  };
-
-  if (loading) {
-    return (
-      <Shell>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "50vh" }}>
-          <div style={{ width: 40, height: 40, border: "3px solid rgba(255,255,255,0.1)", borderTopColor: "#3b82f6", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
-        </div>
-      </Shell>
-    );
-  }
+  const [activeMovie, setActiveMovie] = useState<typeof ACTION_MOVIES[0] | null>(null);
 
   return (
     <Shell>
-      <div style={{ marginBottom: 32, textAlign: "center" }}>
-        <h1 className="page-title" style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
-          <span className="breathe" style={{ display: "inline-block", color: "var(--accent)" }}>🎭</span> Premium Movie Groups
+      {/* Header */}
+      <div style={{ marginBottom: 24, textAlign: "center" }}>
+        <h1 style={{
+          margin: 0,
+          fontSize: "clamp(20px, 5vw, 30px)",
+          fontWeight: 800,
+          background: "linear-gradient(90deg, #f97316, #ef4444, #a855f7)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+        }}>
+          🎬 Action Movies
         </h1>
-        <p className="muted" style={{ margin: "8px 0 16px 0" }}>Unlock exclusive movie connections and the latest blockbusters.</p>
+        <p style={{ margin: "6px 0 0", color: "var(--muted)", fontSize: 13 }}>
+          Tap any movie to watch the trailer
+        </p>
       </div>
 
-      <div className="grid cols-2 cols-2-mobile" style={{ gap: 16 }}>
-        {groups.map((group) => {
-          const unlocked = isPurchased(group.id!);
-          return (
-            <Link 
-              key={group.id} 
-              to={`/movies/${group.id}`}
-              className="card movie-group-card" 
-              style={{ 
-                background: "linear-gradient(135deg, rgba(11, 18, 36, 0.9), rgba(5, 8, 22, 0.95))", 
-                border: "1px solid var(--stroke)", 
-                transition: "transform 0.3s ease, box-shadow 0.3s ease", 
-                cursor: "pointer",
+      {/* 2-Column Square Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10 }}>
+        {ACTION_MOVIES.map((movie) => (
+          <div
+            key={movie.id}
+            onClick={() => setActiveMovie(movie)}
+            style={{
+              position: "relative",
+              width: "100%",
+              aspectRatio: "1 / 1",
+              borderRadius: 12,
+              overflow: "hidden",
+              cursor: "pointer",
+              border: "1px solid rgba(255,255,255,0.07)",
+              background: "#111",
+            }}
+          >
+            {/* Unsplash thumbnail — guaranteed to load */}
+            <img
+              src={movie.thumb}
+              alt={movie.title}
+              loading="lazy"
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            />
+
+            {/* Dark gradient */}
+            <div style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(to bottom, transparent 25%, rgba(0,0,0,0.88) 100%)",
+            }} />
+
+            {/* Play button */}
+            <div style={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}>
+              <div style={{
+                width: 42,
+                height: 42,
+                borderRadius: "50%",
+                background: "rgba(239,68,68,0.9)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 0 18px rgba(239,68,68,0.6)",
+              }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </div>
+            </div>
+
+            {/* Genre badge */}
+            <div style={{
+              position: "absolute",
+              top: 7,
+              left: 7,
+              background: "rgba(0,0,0,0.7)",
+              backdropFilter: "blur(6px)",
+              color: "#fb923c",
+              fontSize: 8,
+              fontWeight: 800,
+              padding: "2px 7px",
+              borderRadius: 20,
+              border: "1px solid rgba(251,146,60,0.4)",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+              maxWidth: "90%",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}>
+              {movie.genre}
+            </div>
+
+            {/* Title */}
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "8px" }}>
+              <p style={{
+                margin: 0,
+                fontSize: 11,
+                fontWeight: 700,
+                color: "#fff",
+                lineHeight: 1.3,
+                textShadow: "0 1px 6px rgba(0,0,0,0.9)",
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
                 overflow: "hidden",
-                textDecoration: "none",
-                display: "block"
-              }}
-              onMouseEnter={(e) => { 
-                e.currentTarget.style.transform = "translateY(-6px)"; 
-                e.currentTarget.style.boxShadow = unlocked ? "0 12px 30px rgba(16, 185, 129, 0.2)" : "0 12px 30px rgba(250, 204, 21, 0.15)"; 
-                e.currentTarget.style.borderColor = unlocked ? "var(--accent)" : "#facc15"; 
-              }}
-              onMouseLeave={(e) => { 
-                e.currentTarget.style.transform = "none"; 
-                e.currentTarget.style.boxShadow = "var(--shadow)"; 
-                e.currentTarget.style.borderColor = "var(--stroke)"; 
+              }}>
+                {movie.title}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* YouTube Player Modal */}
+      {activeMovie && (
+        <div
+          onClick={() => setActiveMovie(null)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.97)",
+            zIndex: 9999,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "16px",
+            backdropFilter: "blur(20px)",
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ width: "100%", maxWidth: 860, position: "relative" }}
+          >
+            <button
+              onClick={() => setActiveMovie(null)}
+              style={{
+                position: "absolute",
+                top: -42,
+                right: 0,
+                background: "rgba(239,68,68,0.2)",
+                border: "1px solid rgba(239,68,68,0.5)",
+                color: "#fff",
+                fontSize: 13,
+                fontWeight: 700,
+                padding: "6px 16px",
+                borderRadius: 20,
+                cursor: "pointer",
               }}
             >
-              <div style={{ position: "relative", width: "100%", paddingTop: "130%" }}>
-                <img 
-                  src={group.thumbnail}
-                  alt={group.name}
-                  style={{ 
-                    position: "absolute", 
-                    top: 0, 
-                    left: 0, 
-                    width: "100%", 
-                    height: "100%", 
-                    objectFit: "cover",
-                    filter: unlocked ? "none" : "blur(4px) brightness(0.6)"
-                  }} 
-                />
-                {!unlocked && (
-                  <div style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "rgba(0,0,0,0.4)"
-                  }}>
-                    <span className="breathe" style={{ fontSize: 40, marginBottom: 12 }}>🔒</span>
-                    <span style={{ 
-                      background: "rgba(250, 204, 21, 0.9)", 
-                      color: "#000", 
-                      padding: "6px 12px", 
-                      borderRadius: 20, 
-                      fontSize: 14, 
-                      fontWeight: 800,
-                      boxShadow: "0 0 20px rgba(250, 204, 21, 0.5)"
-                    }}>
-                      {group.amount} {group.currency}
-                    </span>
-                  </div>
-                )}
-                {unlocked && (
-                  <div style={{
-                    position: "absolute",
-                    top: 12,
-                    right: 12,
-                    background: "rgba(16, 185, 129, 0.9)",
-                    color: "#fff",
-                    padding: "4px 8px",
-                    borderRadius: 8,
-                    fontSize: 11,
-                    fontWeight: 800,
-                    boxShadow: "0 0 10px rgba(16, 185, 129, 0.5)"
-                  }}>
-                    UNLOCKED
-                  </div>
-                )}
-              </div>
-              <div className="card-body" style={{ padding: 16 }}>
-                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: unlocked ? "var(--accent)" : "#fef08a" }}>
-                  {group.name}
-                </h3>
-                <p style={{ margin: "6px 0 0 0", fontSize: 13, color: "var(--muted)", lineHeight: 1.4 }}>
-                  {group.description}
-                </p>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
+              ✕ Close
+            </button>
+
+            <div style={{
+              position: "relative",
+              paddingTop: "56.25%",
+              borderRadius: 14,
+              overflow: "hidden",
+              background: "#000",
+              border: "1px solid rgba(239,68,68,0.35)",
+              boxShadow: "0 0 50px rgba(239,68,68,0.2)",
+            }}>
+              <iframe
+                key={activeMovie.youtubeId}
+                src={`https://www.youtube.com/embed/${activeMovie.youtubeId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+                title={activeMovie.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                allowFullScreen
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  border: "none",
+                }}
+              />
+            </div>
+
+            <div style={{ marginTop: 14, textAlign: "center" }}>
+              <h2 style={{ margin: 0, color: "#fff", fontSize: 18, fontWeight: 800 }}>
+                {activeMovie.title}
+              </h2>
+              <p style={{ margin: "3px 0 0", color: "#f97316", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                {activeMovie.genre}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </Shell>
   );
 }
-
