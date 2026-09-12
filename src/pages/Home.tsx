@@ -136,7 +136,35 @@ export default function Home() {
       {loading ? (
         <div style={{ textAlign: "center", padding: 40, color: "var(--accent)" }}>{t.loadingMatches}</div>
       ) : matches.length === 0 ? (
-        <div className="alert" style={{ textAlign: "center" }}>{t.noMatches}</div>
+        <div style={{
+          textAlign: "center",
+          padding: "60px 20px",
+          background: "rgba(255,255,255,0.02)",
+          borderRadius: 24,
+          border: "1px dashed var(--stroke)",
+          margin: "20px 0"
+        }}>
+          <div style={{
+            width: 80,
+            height: 80,
+            borderRadius: "50%",
+            background: "rgba(16, 185, 129, 0.1)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "0 auto 20px",
+            boxShadow: "0 0 30px rgba(16, 185, 129, 0.1)"
+          }}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--accent)" }}>
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+              <path d="M9 16h6" />
+            </svg>
+          </div>
+          <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "var(--text)" }}>No matches found</h3>
+        </div>
       ) : (
         <div className="grid cols-2" style={{ gap: 20 }}>
           {matches.map((m) => (

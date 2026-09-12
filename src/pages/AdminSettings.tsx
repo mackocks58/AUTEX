@@ -8,16 +8,24 @@ interface AppSettings {
   betslipsAccessMode: AccessMode;
   betslipsFreeBadgeText: string;
   betslipsPaidBadgeText: string;
+  badgeColor: "blue" | "green";
   maintenanceMode: boolean;
   maintenanceMessage: string;
   siteName: string;
   siteTagline: string;
+  adEnabled: boolean;
+  adImageUrl: string;
+  adLinkUrl: string;
 }
 
 const DEFAULTS: AppSettings = {
+  adEnabled: false,
+  adImageUrl: "https://via.placeholder.com/600x400?text=Premium+Ad",
+  adLinkUrl: "https://example.com",
   betslipsAccessMode: "paid",
   betslipsFreeBadgeText: "FREE",
   betslipsPaidBadgeText: "BUY TO UNLOCK",
+  badgeColor: "blue",
   maintenanceMode: false,
   maintenanceMessage: "We are currently performing maintenance. Please check back soon.",
   siteName: "Mfalme wa Mikeka",
@@ -252,6 +260,114 @@ export function AdminSettings() {
               </button>
             </div>
           </SettingRow>
+          <SettingRow
+            icon="🎨"
+            title="Winning Badge Color"
+            description="Choose the color of the 'WON' badge (Meta Blue or Emerald Green)."
+          >
+            <div style={{ display: "flex", gap: 10 }}>
+              {(["blue", "green"] as const).map(color => (
+                <button
+                  key={color}
+                  className="btn"
+                  onClick={() => void save("badgeColor", color)}
+                  disabled={saving === "badgeColor"}
+                  style={{
+                    background: settings.badgeColor === color 
+                      ? (color === "blue" ? "rgba(8, 102, 255, 0.2)" : "rgba(16, 185, 129, 0.2)")
+                      : "transparent",
+                    border: `1px solid ${
+                      settings.badgeColor === color 
+                        ? (color === "blue" ? "#0866FF" : "#10b981")
+                        : "var(--stroke)"
+                    }`,
+                    color: color === "blue" ? "#0866FF" : "#10b981",
+                    padding: "6px 14px",
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {color}
+                </button>
+              ))}
+            </div>
+          </SettingRow>
+        </div>
+      </div>
+
+      {/* Pop-up Ad Settings */}
+      <div className="card">
+        <div className="card-body">
+          <h3 style={{ margin: "0 0 4px", fontSize: 16, fontWeight: 800, color: "var(--accent)" }}>
+            ?? Pop-up Ad Settings
+          </h3>
+          <p style={{ margin: "0 0 8px", fontSize: 13, color: "var(--muted)" }}>
+            Configure the ad that pops up when a user visits the app.
+          </p>
+
+          <SettingRow
+            icon="??"
+            title="Enable Pop-up Ad"
+            description="If ON, users will see the ad pop-up. If OFF, the ad is hidden."
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 12, color: "var(--muted)", fontWeight: 600 }}>
+                {settings.adEnabled ? "ON" : "OFF"}
+              </span>
+              <ToggleSwitch
+                id="toggle-ad"
+                checked={settings.adEnabled}
+                onChange={(v) => void save("adEnabled", v)}
+              />
+              {saving === "adEnabled" && (
+                <div style={{ width: 14, height: 14, border: "2px solid rgba(255,255,255,0.2)", borderTopColor: "var(--accent)", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+              )}
+              {savedKey === "adEnabled" && <span style={{ fontSize: 16 }}>?</span>}
+            </div>
+          </SettingRow>
+
+          <div style={{ marginTop: 16 }}>
+            <label style={{ fontSize: 13, color: "var(--muted)", display: "block", marginBottom: 6 }}>
+              Ad Image URL (Banner)
+            </label>
+            <div style={{ display: "flex", gap: 8 }}>
+              <input
+                className="input"
+                value={settings.adImageUrl}
+                onChange={e => setSettings(s => ({ ...s, adImageUrl: e.target.value }))}
+                style={{ flex: 1, padding: "8px 12px", fontSize: 13 }}
+                placeholder="https://..."
+              />
+              <button
+                className="btn btn-ghost"
+                onClick={() => void save("adImageUrl", settings.adImageUrl)}
+                disabled={saving === "adImageUrl"}
+              >
+                {savedKey === "adImageUrl" ? "?" : "Save"}
+              </button>
+            </div>
+          </div>
+
+          <div style={{ marginTop: 16 }}>
+            <label style={{ fontSize: 13, color: "var(--muted)", display: "block", marginBottom: 6 }}>
+              Ad Link URL (Where it clicks to)
+            </label>
+            <div style={{ display: "flex", gap: 8 }}>
+              <input
+                className="input"
+                value={settings.adLinkUrl}
+                onChange={e => setSettings(s => ({ ...s, adLinkUrl: e.target.value }))}
+                style={{ flex: 1, padding: "8px 12px", fontSize: 13 }}
+                placeholder="https://..."
+              />
+              <button
+                className="btn btn-ghost"
+                onClick={() => void save("adLinkUrl", settings.adLinkUrl)}
+                disabled={saving === "adLinkUrl"}
+              >
+                {savedKey === "adLinkUrl" ? "?" : "Save"}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -358,3 +474,5 @@ export function AdminSettings() {
     </div>
   );
 }
+
+

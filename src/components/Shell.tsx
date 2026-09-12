@@ -7,6 +7,7 @@ import { Navbar } from "./Navbar";
 import { BottomNav } from "./BottomNav";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
+import { PopUpAd } from "./PopUpAd";
 
 interface MaintenanceSettings {
   maintenanceMode: boolean;
@@ -331,6 +332,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
   return (
     <div className="shell">
+      <PopUpAd />
       <NetworkDetector />
       {/* Full-screen maintenance block for non-admin users */}
       {isBlocked && <MaintenanceScreen message={maintenance.maintenanceMessage} />}
@@ -384,3 +386,4 @@ export function Shell({ children }: { children: ReactNode }) {
     </div>
   );
 }
+

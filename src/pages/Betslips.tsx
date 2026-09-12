@@ -40,13 +40,24 @@ function CountdownBadge({ expiresAt }: { expiresAt: number }) {
 export default function Betslips() {
   const [rows, setRows] = useState<Record<string, Betslip> | null>(null);
   const [loading, setLoading] = useState(true);
+  const [badgeColor, setBadgeColor] = useState<"blue" | "green">("blue");
 
   useEffect(() => {
     const r = ref(db, "betslips");
-    return onValue(r, (snap) => {
+    const unsub = onValue(r, (snap) => {
       setRows(snap.val() as Record<string, Betslip> | null);
       setLoading(false);
     });
+    
+    const settingsRef = ref(db, "settings/badgeColor");
+    const unsubSettings = onValue(settingsRef, (snap) => {
+      setBadgeColor(snap.val() || "blue");
+    });
+
+    return () => {
+      unsub();
+      unsubSettings();
+    };
   }, []);
 
   const [params] = useSearchParams();
@@ -87,24 +98,39 @@ export default function Betslips() {
       </header>
 
       <div className="row" style={{ marginBottom: 20, gap: 12 }}>
-        <span className="muted" style={{ fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", fontSize: 13 }}>Last 5 Results</span>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+          <span className="muted" style={{ fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", fontSize: 13 }}>Last 5 Results</span>
+          {stats.length > 0 && (
+            <span style={{ 
+              fontSize: 12, 
+              fontWeight: 700, 
+              color: "var(--accent)", 
+              background: "rgba(16, 185, 129, 0.15)", 
+              padding: "2px 8px", 
+              borderRadius: 12 
+            }}>
+              {Math.round((stats.filter(s => s === "won").length / stats.length) * 100)}% Accuracy
+            </span>
+          )}
+        </div>
         <div className="row" style={{ gap: 8 }} aria-label="Last five betslip results">
           {stats.length === 0 ? (
             <span className="muted" style={{ fontSize: 13 }}>No results yet</span>
           ) : (
             stats.map((result, i) => (
-              <span key={i} className={`pill ${result === "won" ? "breathe" : ""}`} style={{
-                width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", padding: 0,
-                background: result === "won" ? "rgba(52, 211, 153, 0.2)" : "rgba(251, 113, 133, 0.15)",
-                borderColor: result === "won" ? "rgba(52, 211, 153, 0.4)" : "rgba(251, 113, 133, 0.3)",
-                color: result === "won" ? "#34d399" : "#fb7185",
-                borderRadius: "50%",
-                boxShadow: result === "won" ? "0 0 12px rgba(52, 211, 153, 0.3)" : "none"
+              <span key={i} className={result === "won" ? "breathe" : "pill"} style={{
+                width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", padding: 0,
+                background: result === "won" ? "none" : "rgba(251, 113, 133, 0.15)",
+                border: result === "won" ? "none" : "1px solid rgba(251, 113, 133, 0.3)",
+                color: result === "won" ? (badgeColor === "green" ? "#10b981" : "#0866FF") : "#fb7185",
+                borderRadius: result === "won" ? 0 : "50%",
               }}>
                 {result === "won" ? (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" /></svg>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style={{ filter: `drop-shadow(0 0 6px ${badgeColor === "green" ? "rgba(16, 185, 129, 0.4)" : "rgba(8, 102, 255, 0.4)"})` }}>
+                    <path d="M23 12l-2.44-2.78.34-3.68-3.61-.82-1.89-3.18L12 3 8.6 1.54 6.71 4.72l-3.61.81.34 3.68L1 12l2.44 2.78-.34 3.69 3.61.82 1.89 3.18L12 21l3.4 1.46 1.89-3.18 3.61-.82-.34-3.68L23 12zm-13 5l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
+                  </svg>
                 ) : (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" /></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" /></svg>
                 )}
               </span>
             ))
@@ -150,3 +176,5 @@ export default function Betslips() {
     </Shell>
   );
 }
+
+
