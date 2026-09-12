@@ -13,12 +13,10 @@ export function PopUpAd() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Only check once per session using sessionStorage
-    const isDismissed = sessionStorage.getItem("adDismissed") === "true";
+    // Check if user dismissed it for this session to avoid annoyance on every page navigation
+    const isDismissed = sessionStorage.getItem("adDismissedTemp") === "true";
     if (isDismissed) {
       setDismissed(true);
-      setLoading(false);
-      return;
     }
 
     const r = ref(db, "settings");
@@ -26,7 +24,7 @@ export function PopUpAd() {
       const val = snap.val();
       if (val) {
         setAdSettings({
-          adEnabled: val.adEnabled === true,
+          adEnabled: val.adEnabled === true || String(val.adEnabled) === "true",
           adImageUrl: val.adImageUrl || "https://via.placeholder.com/600x400?text=Premium+Ad",
           adLinkUrl: val.adLinkUrl || "#"
         });
@@ -42,7 +40,7 @@ export function PopUpAd() {
 
   const handleDismiss = () => {
     setDismissed(true);
-    sessionStorage.setItem("adDismissed", "true");
+    sessionStorage.setItem("adDismissedTemp", "true");
   };
 
   return (
@@ -100,6 +98,7 @@ export function PopUpAd() {
           <img 
             src={adSettings.adImageUrl} 
             alt="Advertisement" 
+            onError={() => setDismissed(true)}
             style={{ 
               width: "100%", 
               height: "auto", 
@@ -114,3 +113,6 @@ export function PopUpAd() {
     </div>
   );
 }
+
+
+
