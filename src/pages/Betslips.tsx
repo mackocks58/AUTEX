@@ -41,11 +41,15 @@ export default function Betslips() {
   const [rows, setRows] = useState<Record<string, Betslip> | null>(null);
   const [loading, setLoading] = useState(true);
   const [badgeColor, setBadgeColor] = useState<"blue" | "green">("blue");
+  const [accessMode, setAccessMode] = useState("paid");
 
   useEffect(() => {
     const r = ref(db, "betslips");
     const unsub = onValue(r, (snap) => {
       setRows(snap.val() as Record<string, Betslip> | null);
+      setLoading(false);
+    }, (err) => {
+      console.error(err);
       setLoading(false);
     });
     
@@ -139,42 +143,51 @@ export default function Betslips() {
       </div>
 
       <div className="grid cols-3">
-        {list.map((b) => (
-          <article key={b.id} className="card">
-            <div style={{ position: "relative", overflow: "hidden" }}>
-              <img className="thumb" src={b.imageUrl} alt="" loading="lazy" style={{ filter: "blur(14px) brightness(0.6)", transform: "scale(1.1)", transition: "all 0.3s ease" }} />
-              <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", background: "rgba(5, 8, 22, 0.3)" }}>
-                <span className="breathe" style={{ fontSize: 36, filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.8))", display: "inline-block" }}>🔒</span>
-                <span className="breathe" style={{ fontWeight: 700, marginTop: 8, color: "#fff", textShadow: "0 2px 8px rgba(0,0,0,0.8)", letterSpacing: "0.05em", display: "inline-block" }}>PREMIUM BETSLIP</span>
+        {list.map((b) => {
+          const isFree = accessMode === "free" || Number(b.cost) === 0;
+          return (
+            <article key={b.id} className="card">
+              <div style={{ position: "relative", overflow: "hidden" }}>
+                <img className="thumb" src={b.imageUrl} alt="" loading="lazy" style={{ filter: isFree ? "none" : "blur(14px) brightness(0.6)", transform: isFree ? "none" : "scale(1.1)", transition: "all 0.3s ease" }} />
+                {!isFree && (
+                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", background: "rgba(5, 8, 22, 0.3)" }}>
+                    <span className="breathe" style={{ fontSize: 36, filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.8))", display: "inline-block" }}>🔒</span>
+                    <span className="breathe" style={{ fontWeight: 700, marginTop: 8, color: "#fff", textShadow: "0 2px 8px rgba(0,0,0,0.8)", letterSpacing: "0.05em", display: "inline-block" }}>PREMIUM BETSLIP</span>
+                  </div>
+                )}
               </div>
-            </div>
-            <div className="card-body">
-              <div className="row" style={{ justifyContent: "space-between" }}>
-                <span className="badge">
-                  <strong>{b.company}</strong>
-                </span>
-                <CountdownBadge expiresAt={Number(b.expiresAt)} />
+              <div className="card-body">
+                <div className="row" style={{ justifyContent: "space-between" }}>
+                  <span className="badge">
+                    <strong>{b.company}</strong>
+                  </span>
+                  <CountdownBadge expiresAt={Number(b.expiresAt)} />
+                </div>
+                <h3 style={{ marginTop: 12 }}>{b.title}</h3>
+                <p className="muted" style={{ margin: "8px 0 14px" }}>
+                  Expires {new Date(Number(b.expiresAt)).toLocaleString()}
+                </p>
+                <div className="row" style={{ justifyContent: "space-between" }}>
+                  <span className="pill">
+                    {b.cost} {b.currency}
+                  </span>
+                  <Link className="btn" to={`/slip/${b.id}`}>
+                    View
+                  </Link>
+                </div>
               </div>
-              <h3 style={{ marginTop: 12 }}>{b.title}</h3>
-              <p className="muted" style={{ margin: "8px 0 14px" }}>
-                Expires {new Date(Number(b.expiresAt)).toLocaleString()}
-              </p>
-              <div className="row" style={{ justifyContent: "space-between" }}>
-                <span className="pill">
-                  {b.cost} {b.currency}
-                </span>
-                <Link className="btn" to={`/slip/${b.id}`}>
-                  View
-                </Link>
-              </div>
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </div>
 
       {!list.length && <p className="muted">No active betslips right now. Check back soon.</p>}
     </Shell>
   );
 }
+
+
+
+
 
 

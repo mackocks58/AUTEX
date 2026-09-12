@@ -73,8 +73,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (userSnap.exists() && String(userSnap.val()).toLowerCase() === "admin") {
             hasDbAdmin = true;
           }
-        } catch (e) {
-          console.warn("Could not fetch user role", e);
+        } catch (e: any) {
+          if (!e?.message?.includes("Permission denied")) {
+            console.warn("Could not fetch user role", e);
+          }
         }
 
         if (!hasDbAdmin) {

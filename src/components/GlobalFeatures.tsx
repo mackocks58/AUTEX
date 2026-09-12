@@ -92,17 +92,36 @@ export function GlobalFeatures() {
 
   // Handle random pop-up ads
   useEffect(() => {
-    const scheduleNextAd = () => {
-      const nextDelay = 180000; // 3 minutes
-      return setTimeout(() => {
-        const randomAd = adsPool[Math.floor(Math.random() * adsPool.length)];
-        setCurrentAd(randomAd);
-        setShowAd(true);
-      }, nextDelay);
-    };
+    let timerId: NodeJS.Timeout;
+    
+    const r = ref(db, "settings/adEnabled");
+    const unsub = onValue(r, (snap) => {
+      const enabled = snap.val() === true || String(snap.val()) === "true";
+      
+      if (!enabled) {
+        setShowAd(false);
+        if (timerId) clearTimeout(timerId);
+        return;
+      }
 
-    let timerId = scheduleNextAd();
-    return () => clearTimeout(timerId);
+      const scheduleNextAd = () => {
+        const nextDelay = 180000; // 3 minutes
+        timerId = setTimeout(() => {
+          const randomAd = adsPool[Math.floor(Math.random() * adsPool.length)];
+          setCurrentAd(randomAd);
+          setShowAd(true);
+        }, nextDelay);
+      };
+
+      if (!showAd) {
+        scheduleNextAd();
+      }
+    });
+
+    return () => {
+      unsub();
+      if (timerId) clearTimeout(timerId);
+    };
   }, [showAd, adsPool]);
 
   return (
@@ -174,3 +193,4 @@ export function GlobalFeatures() {
     </>
   );
 }
+

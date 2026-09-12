@@ -112,7 +112,8 @@ export default function BetslipDetail() {
   }, [id, user]);
 
   useEffect(() => {
-    if (!id || !user || (accessMode !== "free" && purchase?.status !== "completed")) {
+    const isFree = accessMode === "free" || Number(slip?.cost) === 0;
+    if (!id || !user || (!isFree && purchase?.status !== "completed")) {
       setCode(null);
       return;
     }
@@ -125,7 +126,7 @@ export default function BetslipDetail() {
       },
       () => setCode(null)
     );
-  }, [id, user, purchase?.status, accessMode]);
+  }, [id, user, purchase?.status, accessMode, slip?.cost]);
 
   // Listen to global access mode setting
   useEffect(() => {
@@ -288,26 +289,6 @@ export default function BetslipDetail() {
             </div>
           )}
 
-          {/* Free access banner */}
-          {accessMode === "free" && user && (
-            <div style={{
-              padding: "14px 18px",
-              borderRadius: 14,
-              background: "linear-gradient(135deg, rgba(16,185,129,0.14), rgba(4,120,87,0.07))",
-              border: "1px solid rgba(16,185,129,0.35)",
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-            }}>
-              <span style={{ fontSize: 26 }}>🆓</span>
-              <div>
-                <div style={{ fontWeight: 800, color: "var(--accent)", fontSize: 15 }}>Free Access Enabled</div>
-                <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 2 }}>
-                  The admin has made all betslips free. Your code is unlocked below!
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Payment form — only shown in paid mode when not yet purchased */}
           {user && !unlocked && accessMode === "paid" && (
@@ -405,3 +386,4 @@ export default function BetslipDetail() {
     </Shell>
   );
 }
+
