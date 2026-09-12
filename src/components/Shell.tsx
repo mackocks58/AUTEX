@@ -163,6 +163,141 @@ function MaintenanceScreen({ message }: { message: string }) {
   );
 }
 
+function NetworkDetector() {
+  const [isOnline, setIsOnline] = useState(typeof navigator !== "undefined" ? navigator.onLine : true);
+  const [justCameOnline, setJustCameOnline] = useState(false);
+
+  useEffect(() => {
+    function handleOnline() {
+      setIsOnline(true);
+      setJustCameOnline(true);
+      setTimeout(() => setJustCameOnline(false), 3500); // Hide the "back online" message after 3.5s
+    }
+
+    function handleOffline() {
+      setIsOnline(false);
+      setJustCameOnline(false);
+    }
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  if (isOnline) {
+    if (justCameOnline) {
+      return (
+        <div style={{
+          position: "fixed",
+          bottom: 24,
+          left: "50%",
+          transform: "translateX(-50%)",
+          background: "rgba(16, 185, 129, 0.9)",
+          backdropFilter: "blur(8px)",
+          color: "#fff",
+          padding: "10px 20px",
+          borderRadius: 30,
+          fontWeight: 700,
+          fontSize: 14,
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          boxShadow: "0 8px 32px rgba(16,185,129,0.3)",
+          zIndex: 99999,
+          animation: "slideUpFade 0.4s ease-out",
+        }}>
+          <span style={{ fontSize: 18 }}>🟢</span>
+          Back Online!
+          <style>{`
+            @keyframes slideUpFade {
+              from { opacity: 0; transform: translate(-50%, 20px); }
+              to { opacity: 1; transform: translate(-50%, 0); }
+            }
+          `}</style>
+        </div>
+      );
+    }
+    return null;
+  }
+
+  // Offline Full Screen Blocker
+  return (
+    <div style={{
+      position: "fixed",
+      inset: 0,
+      zIndex: 99999,
+      background: "radial-gradient(ellipse at center, rgba(220,38,38,0.15) 0%, transparent 70%), var(--bg)",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "24px",
+      textAlign: "center",
+      backdropFilter: "blur(12px)",
+    }}>
+      <div style={{
+        width: 100,
+        height: 100,
+        borderRadius: "50%",
+        background: "rgba(220,38,38,0.1)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 24,
+        boxShadow: "0 0 40px rgba(220,38,38,0.2)",
+        animation: "pulseRed 2s infinite ease-in-out",
+      }}>
+        <span style={{ fontSize: 48, filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.5))" }}>📡</span>
+      </div>
+
+      <h1 style={{ margin: "0 0 12px", fontSize: 28, fontWeight: 900, color: "#f87171" }}>
+        No Internet Connection
+      </h1>
+
+      <p style={{ margin: "0 0 24px", fontSize: 15, color: "var(--muted)", maxWidth: 320, lineHeight: 1.5 }}>
+        You are currently offline. Please check your network or Wi-Fi settings to continue using the app.
+      </p>
+
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        padding: "8px 16px",
+        borderRadius: 20,
+        background: "rgba(220,38,38,0.1)",
+        border: "1px solid rgba(220,38,38,0.2)",
+        color: "#fca5a5",
+        fontSize: 13,
+        fontWeight: 600,
+      }}>
+        <div style={{
+          width: 8,
+          height: 8,
+          borderRadius: "50%",
+          background: "#ef4444",
+          animation: "blink 1s infinite",
+        }} />
+        Waiting for network...
+      </div>
+
+      <style>{`
+        @keyframes pulseRed {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 export function Shell({ children }: { children: ReactNode }) {
   const [params, setParams] = useSearchParams();
   const { t } = useLanguage();
@@ -196,6 +331,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
   return (
     <div className="shell">
+      <NetworkDetector />
       {/* Full-screen maintenance block for non-admin users */}
       {isBlocked && <MaintenanceScreen message={maintenance.maintenanceMessage} />}
 
