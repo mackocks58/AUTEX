@@ -127,7 +127,7 @@ export default function Register() {
                 </svg>
               </div>
               <div style={{ marginBottom: 8 }}>
-                <span className="brand-text-mfalme" style={{ fontSize: 22 }}>Mfalme wa Mikeka</span>
+                <span className="brand-text-mfalme" style={{ fontSize: 22 }}>AUTEX AI</span>
               </div>
               <h1 style={{ margin: 0, background: "linear-gradient(to right, #fef08a, #facc15)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontSize: 20, letterSpacing: "-0.02em" }}>{t.createAccount}</h1>
               <p style={{ margin: "4px 0 0", color: "var(--muted)", fontSize: 14 }}>{t.joinSubtitle}</p>

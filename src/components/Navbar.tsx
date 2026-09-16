@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ref, onValue } from "firebase/database";
 import { db } from "@/firebase";
@@ -14,6 +14,11 @@ export function Navbar() {
   const { user, loading, isAdmin, logout } = useAuth();
   const { lang, toggle, t } = useLanguage();
   const [unreadCount, setUnreadCount] = useState(0);
+  
+  // Search state
+  const [params, setParams] = useSearchParams();
+  const query = params.get("q") || "";
+  const [isSearchActive, setIsSearchActive] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -52,9 +57,99 @@ export function Navbar() {
     };
   }, [user]);
 
+  if (isSearchActive) {
+    return (
+      <nav className="nav" style={{ justifyContent: "center" }}>
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+          gap: 12,
+          animation: "fadeIn 0.2s ease"
+        }}>
+          <button 
+            type="button" 
+            onClick={() => {
+              setIsSearchActive(false);
+              params.delete("q");
+              setParams(params);
+            }}
+            style={{ 
+              background: "transparent", 
+              border: "none", 
+              color: "var(--text)", 
+              cursor: "pointer",
+              padding: 4,
+              display: "flex"
+            }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+          
+          <div style={{ position: "relative", flex: 1, display: "flex", alignItems: "center" }}>
+            <input
+              type="text"
+              autoFocus
+              placeholder="Search coins..."
+              value={query}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val) {
+                  params.set("q", val);
+                } else {
+                  params.delete("q");
+                }
+                setParams(params);
+              }}
+              style={{
+                width: "100%",
+                background: "transparent",
+                border: "none",
+                color: "var(--text)",
+                fontSize: 16,
+                outline: "none",
+              }}
+            />
+            {query && (
+              <button 
+                type="button"
+                onClick={() => {
+                  params.delete("q");
+                  setParams(params);
+                }}
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  background: "rgba(255,255,255,0.1)",
+                  border: "none",
+                  borderRadius: "50%",
+                  width: 20,
+                  height: 20,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--text)",
+                  cursor: "pointer"
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <nav className="nav">
-      <Link to="/" className="brand" title="Mfalme wa Mikeka">
+      <Link to="/" className="brand" title="AUTEX AI">
         <span aria-hidden style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
           <svg width="22" height="18" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -70,9 +165,31 @@ export function Navbar() {
             <circle cx="26" cy="8" r="2.5" fill="#facc15" />
           </svg>
         </span>
-        <span className="brand-text-mfalme" style={{ fontSize: 14, letterSpacing: "0.06em", fontStyle: "normal" }}>MWM</span>
+        <span className="brand-text-mfalme" style={{ fontSize: 14, letterSpacing: "0.06em", fontStyle: "normal" }}>AUTEX AI</span>
       </Link>
+      
       <div className="nav-links">
+        {/* Search Icon */}
+        <button
+          type="button"
+          onClick={() => setIsSearchActive(true)}
+          style={{
+            background: "transparent",
+            border: "none",
+            color: "var(--text)",
+            cursor: "pointer",
+            padding: "5px",
+            display: "flex",
+            alignItems: "center"
+          }}
+          title="Search"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+
         {/* Language toggle */}
         <button
           type="button"
@@ -97,9 +214,6 @@ export function Navbar() {
           🌐 {lang === "en" ? "SW" : "EN"}
         </button>
 
-        <NavLink to="/movies" className={linkCls}>
-          {t.movies}
-        </NavLink>
         {user && isAdmin && (
           <NavLink to="/admin" className={linkCls}>
             {t.admin}
@@ -140,7 +254,13 @@ export function Navbar() {
                 </span>
               )}
             </Link>
-            <button type="button" onClick={() => void logout()}>
+            <button type="button" onClick={() => void logout()} style={{
+              background: "transparent",
+              border: "none",
+              color: "var(--muted)",
+              cursor: "pointer",
+              padding: "5px 8px"
+            }}>
               {t.signOut}
             </button>
           </div>

@@ -62,7 +62,7 @@ export default function ForgotPassword() {
               </svg>
             </div>
             <div style={{ marginBottom: 8 }}>
-              <span className="brand-text-mfalme" style={{ fontSize: 22 }}>Mfalme wa Mikeka</span>
+              <span className="brand-text-mfalme" style={{ fontSize: 22 }}>AUTEX AI</span>
             </div>
             <h1 style={{ margin: 0, background: "linear-gradient(to right, #fef08a, #facc15)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontSize: 20, letterSpacing: "-0.02em" }}>{t.resetPassword}</h1>
             <p style={{ margin: "4px 0 0", color: "var(--muted)", fontSize: 14 }}>{t.enterEmailReset}</p>
@@ -77,7 +77,7 @@ export default function ForgotPassword() {
               </div>
               <h3 style={{ margin: "0 0 8px", color: "#10b981", fontSize: 16 }}>{t.checkInbox}</h3>
               <p style={{ margin: 0, color: "var(--muted)", fontSize: 14 }}>
-                {t.resetSent("Mfalme wa Mikeka")}
+                {t.resetSent("AUTEX AI")}
               </p>
             </div>
           )}

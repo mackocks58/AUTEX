@@ -28,7 +28,7 @@ const DEFAULTS: AppSettings = {
   badgeColor: "blue",
   maintenanceMode: false,
   maintenanceMessage: "We are currently performing maintenance. Please check back soon.",
-  siteName: "Mfalme wa Mikeka",
+  siteName: "AUTEX AI",
   siteTagline: "Premium Betslip Codes",
 };
 

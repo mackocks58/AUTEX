@@ -1,7 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
 import { onValue, push, ref, remove, set, update } from "firebase/database";
 import { db } from "@/firebase";
-import { Match } from "./Home";
+export interface Match {
+  id: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeLogo: string;
+  awayLogo: string;
+  time: string;
+  league: string;
+  status: string;
+  createdAt: number;
+  homeScore: number | null;
+  awayScore: number | null;
+  homeTeamId?: number;
+  awayTeamId?: number;
+  leagueId?: number;
+  season?: number;
+}
 
 export function AdminMatches() {
   const [rows, setRows] = useState<Record<string, Match> | null>(null);
@@ -81,7 +97,7 @@ export function AdminMatches() {
     }
   }
 
-  async function updateMatchField(id: string, field: string, value: string) {
+  async function updateMatchField(id: string, field: string, value: any) {
     setErr(null);
     setMsg(null);
     try {

@@ -87,7 +87,7 @@ export const translations = {
     myChannels: "My Channels",
     affiliateProgram: "Affiliate Program",
     affiliateDesc:
-      "Invite your friends to Mfalme wa Mikeka and earn commissions for every successful registration!",
+      "Invite your friends to AUTEX AI and earn commissions for every successful registration!",
     openAffiliate: "Open Affiliate Dashboard",
     liveCenter: "Live Center",
     liveCenterDesc:
@@ -217,7 +217,7 @@ export const translations = {
     myChannels: "Chaneli Zangu",
     affiliateProgram: "Programu ya Ushirika",
     affiliateDesc:
-      "Alika marafiki wako kwenye Mfalme wa Mikeka na upate kamisheni kwa kila usajili uliofanikiwa!",
+      "Alika marafiki wako kwenye AUTEX AI na upate kamisheni kwa kila usajili uliofanikiwa!",
     openAffiliate: "Fungua Dashibodi ya Ushirika",
     liveCenter: "Kituo cha Moja kwa Moja",
     liveCenterDesc:

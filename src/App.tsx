@@ -14,7 +14,7 @@ import Chat from "@/pages/Chat";
 import PaymentReturn from "@/pages/PaymentReturn";
 import PaymentCancel from "@/pages/PaymentCancel";
 import Account from "@/pages/Account";
-import Betslips from "@/pages/Betslips";
+import Bots from "@/pages/Bots";
 import Notifications from "@/pages/Notifications";
 import Movies from "@/pages/Movies";
 import Affiliate from "@/pages/Affiliate";
@@ -54,7 +54,7 @@ export default function App() {
         <Route path="/account" element={<Account />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/chat" element={<Chat />} />
-        <Route path="/betslips" element={<Betslips />} />
+        <Route path="/bots" element={<Bots />} />
         <Route path="/payment/return" element={<PaymentReturn />} />
         <Route path="/payment/cancel" element={<PaymentCancel />} />
         <Route path="/movies" element={<Movies />} />

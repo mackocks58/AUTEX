@@ -66,7 +66,7 @@ export default function Affiliate() {
   const shareWhatsApp = () => {
     if (!affiliateCode) return;
     const link = `${window.location.origin}/register?ref=${affiliateCode}`;
-    const text = encodeURIComponent(`Join Mfalme wa Mikeka using my referral code *${affiliateCode}* and get premium picks! ${link}`);
+    const text = encodeURIComponent(`Join AUTEX AI using my referral code *${affiliateCode}* and get premium picks! ${link}`);
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
 
@@ -90,7 +90,7 @@ export default function Affiliate() {
         <h1 className="page-title" style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "linear-gradient(to right, #fef08a, #facc15)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
           <span className="breathe" style={{ display: "inline-block", color: "#facc15" }}>✨</span> Affiliate Program
         </h1>
-        <p className="muted" style={{ margin: "0 0 16px 0" }}>Invite your friends to Mfalme wa Mikeka and earn commissions!</p>
+        <p className="muted" style={{ margin: "0 0 16px 0" }}>Invite your friends to AUTEX AI and earn commissions!</p>
       </div>
 
       {loading ? (
