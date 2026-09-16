@@ -1,14 +1,14 @@
-import type { Betslip, BetslipResult } from "@/types";
+import type { Service, ServiceResult } from "@/types";
 
-export function resultSymbol(result: BetslipResult): "X" | "✅" | "—" {
+export function resultSymbol(result: ServiceResult): "X" | "✅" | "—" {
   if (result === "won") return "✅";
   if (result === "lost") return "X";
   return "—";
 }
 
-export function lastFiveStats(betslips: Record<string, Betslip> | null | undefined): BetslipResult[] {
-  if (!betslips) return [];
-  const rows = Object.entries(betslips)
+export function lastFiveStats(Services: Record<string, Service> | null | undefined): ServiceResult[] {
+  if (!Services) return [];
+  const rows = Object.entries(Services)
     .map(([id, v]) => ({ id, ...v }))
     .filter((b) => b.result === "won" || b.result === "lost")
     .sort((a, b) => Number(b.settledAt ?? b.createdAt) - Number(a.settledAt ?? a.createdAt))

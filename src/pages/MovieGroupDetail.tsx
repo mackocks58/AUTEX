@@ -221,7 +221,7 @@ export default function MovieGroupDetail() {
                 </div>
                 <div className="card-body" style={{ padding: 12 }}>
                   <h3 style={{ fontSize: 14, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{movie.title}</h3>
-                  {!movie.youtubeId && <div style={{ fontSize: 10, color: "var(--accent)", marginTop: 4, fontWeight: 700 }}>PREMIUM UPLOAD</div>}
+                  {!movie.youtubeId && <div style={{ fontSize: 10, color: "var(--accent)", marginTop: 4, fontWeight: 700 }}>AI UPLOAD</div>}
                 </div>
               </div>
             ))}

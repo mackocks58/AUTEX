@@ -16,7 +16,7 @@ export default function PaymentReturn() {
   useEffect(() => {
     if (!user) return;
     const orderId = sessionStorage.getItem("checkoutOrderId");
-    const betslipId = sessionStorage.getItem("checkoutBetslipId");
+    const itemId = sessionStorage.getItem("checkoutitemId");
     if (!orderId) {
       setPhase("missing");
       return;
@@ -31,8 +31,8 @@ export default function PaymentReturn() {
         setPhase("success");
         setTimeout(() => {
           sessionStorage.removeItem("checkoutOrderId");
-          sessionStorage.removeItem("checkoutBetslipId");
-          if (betslipId) nav(`/slip/${betslipId}`, { replace: true });
+          sessionStorage.removeItem("checkoutitemId");
+          if (itemId) nav(`/slip/${itemId}`, { replace: true });
           else nav("/", { replace: true });
         }, 1500);
       } else if (s === "failed") {
@@ -155,7 +155,7 @@ export default function PaymentReturn() {
               </svg>
             </div>
             <h2 style={{ margin: "0 0 10px", fontSize: 24, color: "#10b981" }}>Payment Successful!</h2>
-            <p className="muted">Redirecting to your unlocked betslip...</p>
+            <p className="muted">Redirecting to your unlocked Service...</p>
           </div>
         </div>
       )}
@@ -193,7 +193,7 @@ export default function PaymentReturn() {
           <div className="card-body" style={{ textAlign: "center" }}>
             <div className="alert info">No active checkout session was found for this browser tab.</div>
             <Link className="btn" to="/" style={{ marginTop: 15 }}>
-              Browse betslips
+              Browse Services
             </Link>
           </div>
         </div>

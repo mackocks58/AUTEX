@@ -5,9 +5,9 @@ import { db } from "@/firebase";
 type AccessMode = "free" | "paid";
 
 interface AppSettings {
-  betslipsAccessMode: AccessMode;
-  betslipsFreeBadgeText: string;
-  betslipsPaidBadgeText: string;
+  ServicesAccessMode: AccessMode;
+  ServicesFreeBadgeText: string;
+  ServicesPaidBadgeText: string;
   badgeColor: "blue" | "green";
   maintenanceMode: boolean;
   maintenanceMessage: string;
@@ -20,16 +20,16 @@ interface AppSettings {
 
 const DEFAULTS: AppSettings = {
   adEnabled: false,
-  adImageUrl: "https://via.placeholder.com/600x400?text=Premium+Ad",
+  adImageUrl: "https://via.placeholder.com/600x400?text=AI+Ad",
   adLinkUrl: "https://example.com",
-  betslipsAccessMode: "paid",
-  betslipsFreeBadgeText: "FREE",
-  betslipsPaidBadgeText: "BUY TO UNLOCK",
+  ServicesAccessMode: "paid",
+  ServicesFreeBadgeText: "FREE",
+  ServicesPaidBadgeText: "BUY TO UNLOCK",
   badgeColor: "blue",
   maintenanceMode: false,
   maintenanceMessage: "We are currently performing maintenance. Please check back soon.",
   siteName: "AUTEX AI",
-  siteTagline: "Premium Betslip Codes",
+  siteTagline: "AI Service Codes",
 };
 
 function ToggleSwitch({
@@ -147,23 +147,23 @@ export function AdminSettings() {
   return (
     <div style={{ display: "grid", gap: 20 }}>
 
-      {/* Betslips Access Banner */}
+      {/* Services Access Banner */}
       <div style={{
         padding: "18px 20px",
         borderRadius: 16,
-        background: settings.betslipsAccessMode === "free"
+        background: settings.ServicesAccessMode === "free"
           ? "linear-gradient(135deg, rgba(16,185,129,0.12), rgba(4,120,87,0.06))"
           : "linear-gradient(135deg, rgba(250,204,21,0.1), rgba(161,98,7,0.06))",
-        border: `1px solid ${settings.betslipsAccessMode === "free" ? "rgba(16,185,129,0.35)" : "rgba(250,204,21,0.3)"}`,
+        border: `1px solid ${settings.ServicesAccessMode === "free" ? "rgba(16,185,129,0.35)" : "rgba(250,204,21,0.3)"}`,
         display: "flex",
         alignItems: "center",
         gap: 14,
         flexWrap: "wrap",
       }}>
-        <span style={{ fontSize: 32 }}>{settings.betslipsAccessMode === "free" ? "🆓" : "💰"}</span>
+        <span style={{ fontSize: 32 }}>{settings.ServicesAccessMode === "free" ? "🆓" : "💰"}</span>
         <div style={{ flex: 1, minWidth: 180 }}>
-          <div style={{ fontWeight: 800, fontSize: 16, color: settings.betslipsAccessMode === "free" ? "var(--accent)" : "#fde047" }}>
-            Betslips are currently {settings.betslipsAccessMode === "free" ? "FREE for all users" : "paid (users must buy to unlock)"}
+          <div style={{ fontWeight: 800, fontSize: 16, color: settings.ServicesAccessMode === "free" ? "var(--accent)" : "#fde047" }}>
+            Services are currently {settings.ServicesAccessMode === "free" ? "FREE for all users" : "paid (users must buy to unlock)"}
           </div>
           <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 3 }}>
             Change this below to switch between free and paid access globally.
@@ -174,42 +174,42 @@ export function AdminSettings() {
           borderRadius: 20,
           fontWeight: 800,
           fontSize: 12,
-          background: settings.betslipsAccessMode === "free" ? "rgba(16,185,129,0.15)" : "rgba(250,204,21,0.12)",
-          color: settings.betslipsAccessMode === "free" ? "var(--accent)" : "#fde047",
-          border: `1px solid ${settings.betslipsAccessMode === "free" ? "rgba(16,185,129,0.4)" : "rgba(250,204,21,0.35)"}`,
+          background: settings.ServicesAccessMode === "free" ? "rgba(16,185,129,0.15)" : "rgba(250,204,21,0.12)",
+          color: settings.ServicesAccessMode === "free" ? "var(--accent)" : "#fde047",
+          border: `1px solid ${settings.ServicesAccessMode === "free" ? "rgba(16,185,129,0.4)" : "rgba(250,204,21,0.35)"}`,
         }}>
-          {settings.betslipsAccessMode.toUpperCase()}
+          {settings.ServicesAccessMode.toUpperCase()}
         </div>
       </div>
 
-      {/* Betslips Section */}
+      {/* Services Section */}
       <div className="card">
         <div className="card-body">
           <h3 style={{ margin: "0 0 4px", fontSize: 16, fontWeight: 800, color: "var(--accent)" }}>
-            🎟️ Betslips Access Control
+            🎟️ Services Access Control
           </h3>
           <p style={{ margin: "0 0 8px", fontSize: 13, color: "var(--muted)" }}>
-            Control whether users can view betslip codes for free or must pay.
+            Control whether users can view Service codes for free or must pay.
           </p>
 
           <SettingRow
             icon="🔓"
             title="Free Access Mode"
-            description="When ON, all users can see betslip codes without paying. When OFF, users must buy each betslip to unlock the code."
+            description="When ON, all users can see Service codes without paying. When OFF, users must buy each Service to unlock the code."
           >
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 12, color: "var(--muted)", fontWeight: 600 }}>
-                {settings.betslipsAccessMode === "free" ? "FREE" : "PAID"}
+                {settings.ServicesAccessMode === "free" ? "FREE" : "PAID"}
               </span>
               <ToggleSwitch
                 id="toggle-free"
-                checked={settings.betslipsAccessMode === "free"}
-                onChange={(v) => void save("betslipsAccessMode", v ? "free" : "paid")}
+                checked={settings.ServicesAccessMode === "free"}
+                onChange={(v) => void save("ServicesAccessMode", v ? "free" : "paid")}
               />
-              {saving === "betslipsAccessMode" && (
+              {saving === "ServicesAccessMode" && (
                 <div style={{ width: 14, height: 14, border: "2px solid rgba(255,255,255,0.2)", borderTopColor: "var(--accent)", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
               )}
-              {savedKey === "betslipsAccessMode" && (
+              {savedKey === "ServicesAccessMode" && (
                 <span style={{ fontSize: 16 }}>✅</span>
               )}
             </div>
@@ -218,22 +218,22 @@ export function AdminSettings() {
           <SettingRow
             icon="🏷️"
             title="Free Badge Text"
-            description="The label shown on free betslips on the home page."
+            description="The label shown on free Services on the home page."
           >
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
               <input
                 className="input"
-                value={settings.betslipsFreeBadgeText}
-                onChange={e => setSettings(s => ({ ...s, betslipsFreeBadgeText: e.target.value }))}
+                value={settings.ServicesFreeBadgeText}
+                onChange={e => setSettings(s => ({ ...s, ServicesFreeBadgeText: e.target.value }))}
                 style={{ width: 120, padding: "6px 10px", fontSize: 13 }}
               />
               <button
                 className="btn btn-ghost"
                 style={{ padding: "6px 12px", fontSize: 12 }}
-                onClick={() => void save("betslipsFreeBadgeText", settings.betslipsFreeBadgeText)}
-                disabled={saving === "betslipsFreeBadgeText"}
+                onClick={() => void save("ServicesFreeBadgeText", settings.ServicesFreeBadgeText)}
+                disabled={saving === "ServicesFreeBadgeText"}
               >
-                {savedKey === "betslipsFreeBadgeText" ? "✅" : "Save"}
+                {savedKey === "ServicesFreeBadgeText" ? "✅" : "Save"}
               </button>
             </div>
           </SettingRow>
@@ -241,22 +241,22 @@ export function AdminSettings() {
           <SettingRow
             icon="💳"
             title="Paid Badge Text"
-            description="The label shown on locked betslips that require payment."
+            description="The label shown on locked Services that require payment."
           >
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
               <input
                 className="input"
-                value={settings.betslipsPaidBadgeText}
-                onChange={e => setSettings(s => ({ ...s, betslipsPaidBadgeText: e.target.value }))}
+                value={settings.ServicesPaidBadgeText}
+                onChange={e => setSettings(s => ({ ...s, ServicesPaidBadgeText: e.target.value }))}
                 style={{ width: 140, padding: "6px 10px", fontSize: 13 }}
               />
               <button
                 className="btn btn-ghost"
                 style={{ padding: "6px 12px", fontSize: 12 }}
-                onClick={() => void save("betslipsPaidBadgeText", settings.betslipsPaidBadgeText)}
-                disabled={saving === "betslipsPaidBadgeText"}
+                onClick={() => void save("ServicesPaidBadgeText", settings.ServicesPaidBadgeText)}
+                disabled={saving === "ServicesPaidBadgeText"}
               >
-                {savedKey === "betslipsPaidBadgeText" ? "✅" : "Save"}
+                {savedKey === "ServicesPaidBadgeText" ? "✅" : "Save"}
               </button>
             </div>
           </SettingRow>

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { deleteObject, getDownloadURL, ref as storageRef, uploadBytes } from "firebase/storage";
 import { onValue, push, ref, remove, set, update } from "firebase/database";
 import { db, storage } from "@/firebase";
-import type { Betslip, BetslipResult } from "@/types";
+import type { Service, ServiceResult } from "@/types";
 import { Shell } from "@/components/Shell";
 import { useAuth } from "@/context/AuthContext";
 import { BETTING_COMPANIES } from "@/lib/companies";
@@ -14,7 +14,7 @@ import { AdminNotifications } from "./AdminNotifications";
 import { AdminMovies } from "./AdminMovies";
 import { AdminSettings } from "./AdminSettings";
 
-type Row = Betslip & { id: string };
+type Row = Service & { id: string };
 
 function toDatetimeLocalValue(ms: number) {
   const d = new Date(ms);
@@ -29,7 +29,7 @@ function toDatetimeLocalValue(ms: number) {
 
 export default function Admin() {
   const { user, isAdmin, refreshClaims } = useAuth();
-  const [rows, setRows] = useState<Record<string, Betslip> | null>(null);
+  const [rows, setRows] = useState<Record<string, Service> | null>(null);
 
   const [company, setCompany] = useState<string>(BETTING_COMPANIES[0]);
   const [title, setTitle] = useState("");
@@ -43,8 +43,8 @@ export default function Admin() {
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    const r = ref(db, "betslips");
-    return onValue(r, (snap) => setRows(snap.val() as Record<string, Betslip> | null));
+    const r = ref(db, "Services");
+    return onValue(r, (snap) => setRows(snap.val() as Record<string, Service> | null));
   }, []);
 
   const list = useMemo(() => {
@@ -62,14 +62,14 @@ export default function Admin() {
     setMsg(null);
     try {
       await refreshClaims();
-      if (!file) throw new Error("Choose an image for the betslip.");
+      if (!file) throw new Error("Choose an image for the Service.");
       const expiresAt = new Date(expiresAtLocal).getTime();
       if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
         throw new Error("Expiration must be in the future.");
       }
 
-      const key = push(ref(db, "betslips")).key;
-      if (!key) throw new Error("Could not allocate betslip id.");
+      const key = push(ref(db, "Services")).key;
+      if (!key) throw new Error("Could not allocate Service id.");
 
       const reader = new FileReader();
       const imageUrl = await new Promise<string>((resolve, reject) => {
@@ -78,39 +78,39 @@ export default function Admin() {
         reader.readAsDataURL(file);
       });
 
-      await set(ref(db, `betslips/${key}`), {
+      await set(ref(db, `Services/${key}`), {
         company,
         title: title.trim(),
         cost: Number(cost),
         currency: currency.trim() || "TZS",
         imageUrl,
         expiresAt,
-        result: "pending" satisfies BetslipResult,
+        result: "pending" satisfies ServiceResult,
         settledAt: null,
         createdAt: Date.now(),
         createdBy: user.uid,
       });
 
-      await set(ref(db, `betslipCodes/${key}`), { code: code.trim() });
+      await set(ref(db, `ServiceCodes/${key}`), { code: code.trim() });
 
-      setMsg("Betslip created.");
+      setMsg("Service created.");
       setTitle("");
       setCode("");
       setFile(null);
     } catch (e: unknown) {
-      setErr(e instanceof Error ? e.message : "Could not create betslip.");
+      setErr(e instanceof Error ? e.message : "Could not create Service.");
     } finally {
       setBusy(false);
     }
   }
 
   async function deleteSlip(id: string, imageUrl: string) {
-    if (!confirm("Delete this betslip permanently?")) return;
+    if (!confirm("Delete this Service permanently?")) return;
     setErr(null);
     setMsg(null);
     try {
-      await remove(ref(db, `betslips/${id}`));
-      await remove(ref(db, `betslipCodes/${id}`));
+      await remove(ref(db, `Services/${id}`));
+      await remove(ref(db, `ServiceCodes/${id}`));
       const p = storagePathFromDownloadUrl(imageUrl);
       if (p) {
         try {
@@ -125,12 +125,12 @@ export default function Admin() {
     }
   }
 
-  async function updateResult(id: string, next: BetslipResult) {
+  async function updateResult(id: string, next: ServiceResult) {
     setErr(null);
     setMsg(null);
     try {
       const settledAt = next === "pending" ? null : Date.now();
-      await update(ref(db, `betslips/${id}`), { result: next, settledAt });
+      await update(ref(db, `Services/${id}`), { result: next, settledAt });
       setMsg("Updated result.");
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "Could not update.");
@@ -143,7 +143,7 @@ export default function Admin() {
     setErr(null);
     setMsg(null);
     try {
-      await update(ref(db, `betslips/${id}`), { expiresAt });
+      await update(ref(db, `Services/${id}`), { expiresAt });
       setMsg("Updated expiry.");
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "Could not update expiry.");
@@ -156,7 +156,7 @@ export default function Admin() {
     setErr(null);
     setMsg(null);
     try {
-      await update(ref(db, `betslips/${id}`), { cost: n });
+      await update(ref(db, `Services/${id}`), { cost: n });
       setMsg("Updated cost.");
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "Could not update cost.");
@@ -193,10 +193,10 @@ export default function Admin() {
     );
   }
 
-  const [tab, setTab] = useState<"betslips" | "matches" | "notifications" | "movies" | "settings">("betslips");
+  const [tab, setTab] = useState<"Services" | "matches" | "notifications" | "movies" | "settings">("Services");
 
   const TABS: { key: typeof tab; label: string; icon: string }[] = [
-    { key: "betslips",      label: "Betslips",      icon: "🎟️" },
+    { key: "Services",      label: "Services",      icon: "🎟️" },
     { key: "movies",        label: "Movies",        icon: "🎬" },
     { key: "matches",       label: "Matches",       icon: "⚽" },
     { key: "notifications", label: "Alerts",        icon: "🔔" },
@@ -250,11 +250,11 @@ export default function Admin() {
         </div>
       </div>
 
-      {tab === "betslips" ? (
+      {tab === "Services" ? (
         <div className="split">
           <div className="card">
             <div className="card-body">
-              <h2 style={{ margin: "0 0 10px", fontSize: 18 }}>Create betslip</h2>
+              <h2 style={{ margin: "0 0 10px", fontSize: 18 }}>Create Service</h2>
               {msg && <div className="alert info" style={{ marginBottom: 10 }}>{msg}</div>}
               {err && <div className="alert" style={{ marginBottom: 10 }}>{err}</div>}
               <form className="grid" style={{ gap: 12 }} onSubmit={createSlip}>
@@ -294,7 +294,7 @@ export default function Admin() {
                   />
                 </div>
                 <div className="field">
-                  <label htmlFor="img">Betslip image</label>
+                  <label htmlFor="img">Service image</label>
                   <input id="img" type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
                 </div>
                 <div className="field">
@@ -302,7 +302,7 @@ export default function Admin() {
                   <textarea id="code" className="textarea" value={code} onChange={(e) => setCode(e.target.value)} required />
                 </div>
                 <button className="btn" type="submit" disabled={busy}>
-                  {busy ? "Publishing…" : "Publish betslip"}
+                  {busy ? "Publishing…" : "Publish Service"}
                 </button>
               </form>
             </div>
@@ -313,7 +313,7 @@ export default function Admin() {
               <table className="table">
                 <thead>
                   <tr>
-                    <th>Betslip</th>
+                    <th>Service</th>
                     <th>Cost</th>
                     <th>Expiry</th>
                     <th>Result</th>
@@ -327,7 +327,7 @@ export default function Admin() {
                   {!list.length && (
                     <tr>
                       <td colSpan={5} className="muted">
-                        No betslips yet.
+                        No Services yet.
                       </td>
                     </tr>
                   )}
@@ -358,7 +358,7 @@ function AdminRow({
 }: {
   slip: Row;
   onDelete: () => void;
-  onResult: (r: BetslipResult) => void;
+  onResult: (r: ServiceResult) => void;
   onExpiry: (local: string) => void;
   onCost: (cost: string) => void;
 }) {
@@ -408,7 +408,7 @@ function AdminRow({
           <span className="pill mono" style={{ fontSize: 16 }}>
             {slip.result === "pending" ? "…" : resultSymbol(slip.result)}
           </span>
-          <select className="select" value={slip.result} onChange={(e) => onResult(e.target.value as BetslipResult)}>
+          <select className="select" value={slip.result} onChange={(e) => onResult(e.target.value as ServiceResult)}>
             <option value="pending">Pending</option>
             <option value="won">Won (✅)</option>
             <option value="lost">Lost (X)</option>

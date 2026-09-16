@@ -5,7 +5,7 @@ export const translations = {
     // Nav
     home: "Home",
     chat: "Chat",
-    betslips: "Betslips",
+    Services: "Services",
     wallet: "Wallet",
     profile: "Profile",
     movies: "Movies",
@@ -17,7 +17,7 @@ export const translations = {
     // Bottom nav modal
     signInRequired: "Sign In Required",
     signInDesc: (section: string) =>
-      `You need an account to access ${section}. Join to get premium picks!`,
+      `You need an account to access ${section}. Join to get AI trading strategies!`,
     cancel: "Cancel",
 
     // Home
@@ -28,18 +28,18 @@ export const translations = {
     tomorrow: "Tomorrow",
     loadingMatches: "Loading live matches...",
     noMatches: "No matches found. Admins will update the daily matches soon!",
-    viewOdds: "View Odds & Premium Tips",
+    viewOdds: "View Odds & AI insights",
 
     // Auth
     welcomeBack: "Welcome Back",
-    signInSubtitle: "Sign in to access your premium picks.",
+    signInSubtitle: "Sign in to access your AI trading strategies.",
     emailAddress: "Email Address",
     password: "Password",
     forgotPassword: "Forgot password?",
     signIn: "Sign In",
     noAccount: "Don't have an account?",
     createAccount: "Create Account",
-    joinSubtitle: "Join us to get the best premium picks.",
+    joinSubtitle: "Join us to get the best AI trading strategies.",
     fullName: "Full Name",
     username: "Username",
     phoneNumber: "Phone Number",
@@ -101,10 +101,10 @@ export const translations = {
     english: "English",
     swahili: "Swahili",
 
-    // Betslips
-    premiumBetslips: "Premium Betslips",
-    betslipsSubtitle: "Today's handpicked winning codes.",
-    noBetslips: "No premium betslips available today. Check back soon!",
+    // Services
+    AIServices: "AI Services",
+    ServicesSubtitle: "Today's handpicked winning codes.",
+    noServices: "No AI Services available today. Check back soon!",
 
     // Notifications
     notifications: "Notifications",
@@ -119,7 +119,7 @@ export const translations = {
     send: "Send",
 
     // Shell search
-    searchPlaceholder: "Search premium betslips, matches, or codes...",
+    searchPlaceholder: "Search AI Services, matches, or codes...",
 
     // General
     loading: "Loading...",
@@ -133,7 +133,7 @@ export const translations = {
     // Nav
     home: "Nyumbani",
     chat: "Gumzo",
-    betslips: "Kadi za Dau",
+    Services: "Kadi za Dau",
     wallet: "Mkoba",
     profile: "Wasifu",
     movies: "Filamu",
@@ -157,18 +157,18 @@ export const translations = {
     loadingMatches: "Inapakia mechi za moja kwa moja...",
     noMatches:
       "Hakuna mechi zilizopatikana. Wasimamizi watasasisha mechi za leo hivi karibuni!",
-    viewOdds: "Angalia Uwiano & Vidokezo vya Premium",
+    viewOdds: "Angalia Uwiano & Vidokezo vya AI",
 
     // Auth
     welcomeBack: "Karibu Tena",
-    signInSubtitle: "Ingia kupata vidokezo vyako vya premium.",
+    signInSubtitle: "Ingia kupata vidokezo vyako vya AI.",
     emailAddress: "Anwani ya Barua Pepe",
     password: "Nywila",
     forgotPassword: "Umesahau nywila?",
     signIn: "Ingia",
     noAccount: "Huna akaunti?",
     createAccount: "Fungua Akaunti",
-    joinSubtitle: "Jiunge kupata vidokezo bora vya premium.",
+    joinSubtitle: "Jiunge kupata vidokezo bora vya AI.",
     fullName: "Jina Kamili",
     username: "Jina la Mtumiaji",
     phoneNumber: "Namba ya Simu",
@@ -231,11 +231,11 @@ export const translations = {
     english: "Kiingereza",
     swahili: "Kiswahili",
 
-    // Betslips
-    premiumBetslips: "Kadi za Dau za Premium",
-    betslipsSubtitle: "Nambari bora za leo zilizochaguliwa kwa mikono.",
-    noBetslips:
-      "Hakuna kadi za dau za premium leo. Angalia tena hivi karibuni!",
+    // Services
+    AIServices: "Kadi za Dau za AI",
+    ServicesSubtitle: "Nambari bora za leo zilizochaguliwa kwa mikono.",
+    noServices:
+      "Hakuna kadi za dau za AI leo. Angalia tena hivi karibuni!",
 
     // Notifications
     notifications: "Arifa",

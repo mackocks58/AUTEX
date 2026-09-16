@@ -8,11 +8,11 @@ export default function PaymentCancel() {
       <div className="card" style={{ maxWidth: 720 }}>
         <div className="card-body">
           <p className="muted" style={{ marginTop: 0 }}>
-            No charge was completed. You can return to the betslip and try again whenever you are ready.
+            No charge was completed. You can return to the Service and try again whenever you are ready.
           </p>
           <div className="row" style={{ marginTop: 12 }}>
             <Link className="btn" to="/">
-              Back to betslips
+              Back to Services
             </Link>
             <Link className="btn btn-ghost" to="/payments">
               Payment history

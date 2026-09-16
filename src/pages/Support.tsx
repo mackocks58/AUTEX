@@ -49,8 +49,8 @@ export default function Support() {
           <div className="card-body">
             <h2 style={{ margin: "0 0 10px", fontSize: 18 }}>Contact</h2>
             <p className="muted" style={{ marginTop: 0 }}>
-              For payment issues, include your phone number and approximate payment time. For betslip access issues,
-              include the betslip title.
+              For payment issues, include your phone number and approximate payment time. For Service access issues,
+              include the Service title.
             </p>
             <div className="grid" style={{ marginTop: 14, gap: 10 }}>
               <div className="pill">Email: {email || "—"}</div>

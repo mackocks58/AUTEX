@@ -106,7 +106,7 @@ export default function PaymentHistory() {
                     <th>Status</th>
                     <th>Amount</th>
                     <th>Reference</th>
-                    <th>Betslip</th>
+                    <th>Service</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -126,10 +126,10 @@ export default function PaymentHistory() {
                         {p.reference || p.palmpesaTransid || p.selcomTransid || p.orderId || p.id}
                       </td>
                       <td>
-                        {p.betslipId ? (
+                        {p.itemId ? (
                           <Link 
                             className="btn btn-ghost" 
-                            to={`/slip/${p.betslipId}`}
+                            to={`/slip/${p.itemId}`}
                             onClick={(e) => e.stopPropagation()}
                             style={{ padding: "4px 10px", fontSize: 12 }}
                           >
@@ -222,11 +222,11 @@ export default function PaymentHistory() {
                 )}
                 
                 <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: 12 }}>
-                  <span style={{ color: "#a0aec0" }}>Betslip ID</span>
+                  <span style={{ color: "#a0aec0" }}>Service ID</span>
                   <span className="mono" style={{ fontSize: 13, textAlign: "right" }}>
-                    {selectedPayment.betslipId ? (
-                      <Link to={`/slip/${selectedPayment.betslipId}`} style={{ color: "#3b82f6" }}>
-                        {selectedPayment.betslipId}
+                    {selectedPayment.itemId ? (
+                      <Link to={`/slip/${selectedPayment.itemId}`} style={{ color: "#3b82f6" }}>
+                        {selectedPayment.itemId}
                       </Link>
                     ) : "—"}
                   </span>

@@ -2,7 +2,6 @@ import type { ReactElement } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Home from "@/pages/Home";
-import BetslipDetail from "@/pages/BetslipDetail";
 import MovieGroupDetail from "@/pages/MovieGroupDetail";
 import Login from "@/pages/Login";
 import ForgotPassword from "@/pages/ForgotPassword";
@@ -45,7 +44,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/affiliate" element={<Affiliate />} />
         <Route path="/live" element={<LiveMatches />} />
-        <Route path="/slip/:id" element={<BetslipDetail />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/register" element={<Register />} />

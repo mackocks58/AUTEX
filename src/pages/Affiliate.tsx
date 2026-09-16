@@ -66,7 +66,7 @@ export default function Affiliate() {
   const shareWhatsApp = () => {
     if (!affiliateCode) return;
     const link = `${window.location.origin}/register?ref=${affiliateCode}`;
-    const text = encodeURIComponent(`Join AUTEX AI using my referral code *${affiliateCode}* and get premium picks! ${link}`);
+    const text = encodeURIComponent(`Join AUTEX AI using my referral code *${affiliateCode}* and get AI trading strategies! ${link}`);
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
 
