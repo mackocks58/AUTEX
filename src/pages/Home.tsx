@@ -866,8 +866,8 @@ export default function Home() {
       if (snapshot.exists()) {
         setBalance(snapshot.val());
       } else {
-        set(balanceRef, 1000);
-        setBalance(1000);
+        set(balanceRef, 0);
+        setBalance(0);
       }
     });
     return () => unsub();

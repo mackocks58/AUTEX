@@ -13,6 +13,9 @@ import { AdminMatches } from "./AdminMatches";
 import { AdminNotifications } from "./AdminNotifications";
 import { AdminMovies } from "./AdminMovies";
 import { AdminSettings } from "./AdminSettings";
+import { AdminDeposits } from "./AdminDeposits";
+import { AdminPayments } from "./AdminPayments";
+import { AdminWithdraws } from "./AdminWithdraws";
 
 type Row = Service & { id: string };
 
@@ -193,14 +196,17 @@ export default function Admin() {
     );
   }
 
-  const [tab, setTab] = useState<"Services" | "matches" | "notifications" | "movies" | "settings">("Services");
+  const [tab, setTab] = useState<"Services" | "matches" | "notifications" | "movies" | "settings" | "deposits" | "payments" | "withdraws">("Services");
 
   const TABS: { key: typeof tab; label: string; icon: string }[] = [
     { key: "Services",      label: "Services",      icon: "🎟️" },
     { key: "movies",        label: "Movies",        icon: "🎬" },
     { key: "matches",       label: "Matches",       icon: "⚽" },
     { key: "notifications", label: "Alerts",        icon: "🔔" },
+    { key: "payments",      label: "Deposits",      icon: "💳" },
+    { key: "withdraws",     label: "Withdraws",     icon: "💸" },
     { key: "settings",      label: "Settings",      icon: "⚙️" },
+    { key: "deposits",      label: "Gateways",      icon: "🔧" },
   ];
 
   return (
@@ -342,6 +348,12 @@ export default function Admin() {
         <AdminMatches />
       ) : tab === "notifications" ? (
         <AdminNotifications />
+      ) : tab === "payments" ? (
+        <AdminPayments />
+      ) : tab === "withdraws" ? (
+        <AdminWithdraws />
+      ) : tab === "deposits" ? (
+        <AdminDeposits />
       ) : (
         <AdminSettings />
       )}

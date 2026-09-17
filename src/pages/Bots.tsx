@@ -375,8 +375,7 @@ export default function Bots() {
       if (snap.exists()) {
         setBalance(snap.val());
       } else {
-        // Mock $1000 initial balance if they don't have one set up yet
-        set(balanceRef, 1000);
+        set(balanceRef, 0);
       }
     });
     return () => unsubscribe();

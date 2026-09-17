@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { WelcomeBonusModal } from "./WelcomeBonusModal";
 
 const BACKGROUND_IMAGES = [
   "https://images.unsplash.com/photo-1640340434855-6084b1f4901c?q=80&w=2000&auto=format&fit=crop",
@@ -17,18 +18,21 @@ export function GlobalFeatures() {
   }, []);
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0, left: 0, right: 0, bottom: 0,
-        zIndex: -1,
-        backgroundImage: `url(${BACKGROUND_IMAGES[bgIndex]})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        transition: "background-image 1.5s ease-in-out",
-        opacity: 0.08,
-        pointerEvents: "none",
-      }}
-    />
+    <>
+      <div
+        style={{
+          position: "fixed",
+          top: 0, left: 0, right: 0, bottom: 0,
+          zIndex: -1,
+          backgroundImage: `url(${BACKGROUND_IMAGES[bgIndex]})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          transition: "background-image 1.5s ease-in-out",
+          opacity: 0.08,
+          pointerEvents: "none",
+        }}
+      />
+      <WelcomeBonusModal />
+    </>
   );
 }

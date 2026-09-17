@@ -121,6 +121,10 @@ export default function Account() {
               )}
             </div>
 
+            <Link to="/withdraw" className="btn" style={{ width: "100%", padding: "12px", marginBottom: 16, background: "linear-gradient(135deg, #f0b90b, #d4a000)", color: "#0b0e11", fontWeight: 700, textAlign: "center", border: "none" }}>
+              💸 Withdraw Funds
+            </Link>
+
             <button className="btn btn-danger" style={{ width: "100%", padding: "12px" }} onClick={() => void logout()}>
               {t.signOutSecurely}
             </button>

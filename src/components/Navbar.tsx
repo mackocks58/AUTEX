@@ -12,7 +12,7 @@ function linkCls({ isActive }: { isActive: boolean }) {
 
 export function Navbar() {
   const { user, loading, isAdmin, logout } = useAuth();
-  const { lang, toggle, t } = useLanguage();
+  const { t } = useLanguage();
   const [unreadCount, setUnreadCount] = useState(0);
   
   // Search state
@@ -190,29 +190,8 @@ export function Navbar() {
           </svg>
         </button>
 
-        {/* Language toggle */}
-        <button
-          type="button"
-          onClick={toggle}
-          title={t.languageToggle}
-          style={{
-            background: "rgba(250,204,21,0.1)",
-            border: "1px solid rgba(250,204,21,0.25)",
-            borderRadius: 999,
-            padding: "4px 10px",
-            fontSize: 12,
-            fontWeight: 700,
-            color: "#facc15",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: 4,
-            transition: "all 0.2s",
-            letterSpacing: "0.04em",
-          }}
-        >
-          🌐 {lang === "en" ? "SW" : "EN"}
-        </button>
+
+
 
         {user && isAdmin && (
           <NavLink to="/admin" className={linkCls}>
