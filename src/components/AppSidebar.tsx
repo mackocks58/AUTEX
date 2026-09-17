@@ -147,6 +147,7 @@ export function AppSidebar() {
 
       {/* Sidebar panel */}
       <aside
+        className="no-scrollbar"
         style={{
           position: "fixed",
           top: 0,
