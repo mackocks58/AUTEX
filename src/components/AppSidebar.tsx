@@ -32,6 +32,27 @@ const USER_NAV: NavItem[] = [
     ),
   },
   {
+    href: "/my-bots",
+    label: "My Bots",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7H3a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/>
+        <path d="M9 14h.01M15 14h.01"/>
+        <path d="M3 21v-1a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v1"/>
+      </svg>
+    ),
+  },
+  {
+    href: "/assets",
+    label: "My Assets",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="12" y1="1" x2="12" y2="23"/>
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+    ),
+  },
+  {
     href: "/deposit",
     label: "Deposit",
     icon: (
@@ -104,6 +125,14 @@ const USER_NAV: NavItem[] = [
       </svg>
     ),
   },
+];
+
+// Group labels for the sidebar sections
+const NAV_GROUPS = [
+  { label: "Discover", keys: ["/", "/bots"] },
+  { label: "Portfolio", keys: ["/my-bots", "/assets", "/transactions"] },
+  { label: "Finance", keys: ["/deposit", "/withdraw"] },
+  { label: "More", keys: ["/affiliate", "/notifications", "/account", "/support"] },
 ];
 
 const ADMIN_NAV: NavItem[] = [
@@ -284,12 +313,19 @@ export function AppSidebar() {
             <SidebarLink key={item.href} item={item} active={location.pathname === item.href} onClick={close} />
           ))}
 
-          <div style={{ fontSize: 10, fontWeight: 700, color: "#64748b", letterSpacing: "0.1em", textTransform: "uppercase", padding: "12px 8px 4px" }}>
-            Navigation
-          </div>
-          {USER_NAV.map((item) => (
-            <SidebarLink key={item.href} item={item} active={location.pathname === item.href} onClick={close} />
-          ))}
+          {NAV_GROUPS.map((group) => {
+            const items = USER_NAV.filter(n => group.keys.includes(n.href));
+            return (
+              <div key={group.label}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#64748b", letterSpacing: "0.1em", textTransform: "uppercase", padding: "12px 8px 4px" }}>
+                  {group.label}
+                </div>
+                {items.map(item => (
+                  <SidebarLink key={item.href} item={item} active={location.pathname === item.href} onClick={close} />
+                ))}
+              </div>
+            );
+          })}
         </nav>
 
         {/* Footer sign out */}

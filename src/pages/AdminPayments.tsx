@@ -100,6 +100,58 @@ export function AdminPayments() {
             createdAt: Date.now()
           };
         }
+
+        // --- 3-Level Commission Processing ---
+        let currentUserData = userData;
+        const depositAmount = Number(payment.amount);
+        const percentages = [0.15, 0.05, 0.01]; // L1: 15%, L2: 5%, L3: 1%
+
+        for (let level = 0; level < 3; level++) {
+          if (!currentUserData.referredBy) break;
+          
+          const referrerUid = currentUserData.referredBy;
+          const referrerRef = ref(db, `users/${referrerUid}`);
+          const referrerSnap = await get(referrerRef);
+          
+          if (!referrerSnap.exists()) break;
+          
+          const referrerData = referrerSnap.val();
+          const commission = depositAmount * percentages[level];
+          
+          if (commission > 0) {
+            // Increment referrer's balance
+            const currentRefBal = Number(referrerData.balance || 0);
+            updates[`users/${referrerUid}/balance`] = currentRefBal + commission;
+            
+            // Record commission transaction
+            const commPayKey = push(ref(db, `users/${referrerUid}/payments`)).key;
+            if (commPayKey) {
+              updates[`users/${referrerUid}/payments/${commPayKey}`] = {
+                type: "commission",
+                amount: commission,
+                currency: "USD",
+                status: "completed",
+                createdAt: Date.now(),
+                description: `Level ${level + 1} referral commission`
+              };
+            }
+            
+            // Push notification to referrer
+            const commNotifKey = push(ref(db, `userNotifications/${referrerUid}`)).key;
+            if (commNotifKey) {
+              updates[`userNotifications/${referrerUid}/${commNotifKey}`] = {
+                title: `Level ${level + 1} Commission`,
+                message: `You earned a $${commission.toFixed(2)} commission from a Level ${level + 1} referral deposit.`,
+                type: "success",
+                createdAt: Date.now()
+              };
+            }
+          }
+          
+          // Move up the tree for the next iteration
+          currentUserData = referrerData;
+        }
+        // --- End Commission Processing ---
       } else {
         updates[`users/${payment.uid}/payments/${payment.id}/status`] = "failed";
         

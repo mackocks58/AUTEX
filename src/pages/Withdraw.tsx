@@ -389,8 +389,17 @@ export default function Withdraw() {
             </div>
 
             {(checkingPending || settingsLoading) ? (
-              <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
-                <div style={{ width: 24, height: 24, border: "3px solid rgba(255,255,255,0.1)", borderTopColor: "#f0b90b", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+              <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: "16px 0" }}>
+                <style>{`@keyframes withShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
+                {[0, 1, 2].map(i => (
+                  <div key={i} style={{
+                    background: "linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.04) 75%)",
+                    backgroundSize: "200% 100%",
+                    animation: "withShimmer 1.8s ease-in-out infinite",
+                    height: i === 0 ? 80 : 60,
+                    borderRadius: 12
+                  }} />
+                ))}
               </div>
             ) : hasPending ? (
               <div style={{ background: "rgba(240,185,11,0.1)", border: "1px solid rgba(240,185,11,0.3)", borderRadius: 12, padding: 24, textAlign: "center" }}>

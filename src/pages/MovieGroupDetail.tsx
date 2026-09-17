@@ -137,8 +137,17 @@ export default function MovieGroupDetail() {
   if (loading) {
     return (
       <Shell>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "50vh" }}>
-          <div style={{ width: 40, height: 40, border: "3px solid rgba(255,255,255,0.1)", borderTopColor: "#3b82f6", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: "20px 0" }}>
+          <style>{`@keyframes movShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
+          {[0, 1, 2].map(i => (
+            <div key={i} style={{
+              background: "linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.04) 75%)",
+              backgroundSize: "200% 100%",
+              animation: "movShimmer 1.8s ease-in-out infinite",
+              height: i === 0 ? 200 : 80,
+              borderRadius: 16
+            }} />
+          ))}
         </div>
       </Shell>
     );

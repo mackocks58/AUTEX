@@ -14,6 +14,7 @@ import PaymentReturn from "@/pages/PaymentReturn";
 import PaymentCancel from "@/pages/PaymentCancel";
 import Account from "@/pages/Account";
 import Bots from "@/pages/Bots";
+import MyBots from "@/pages/MyBots";
 import Notifications from "@/pages/Notifications";
 import Movies from "@/pages/Movies";
 import Affiliate from "@/pages/Affiliate";
@@ -22,6 +23,7 @@ import { Shell } from "@/components/Shell";
 import { GlobalFeatures } from "@/components/GlobalFeatures";
 import Deposit from "@/pages/Deposit";
 import Withdraw from "@/pages/Withdraw";
+import Assets from "@/pages/Assets";
 
 function AdminRoute({ children }: { children: ReactElement }) {
   const { user, loading } = useAuth();
@@ -42,10 +44,62 @@ function ProtectedRoute({ children }: { children: ReactElement }) {
   const { user, loading } = useAuth();
 
   if (loading) {
+    const s: React.CSSProperties = {
+      background: "linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.04) 75%)",
+      backgroundSize: "200% 100%",
+      animation: "prShimmer 1.8s ease-in-out infinite",
+      borderRadius: 8,
+    };
     return (
       <Shell>
-        <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
-          <div style={{ width: 36, height: 36, border: "3px solid rgba(255,255,255,0.1)", borderTopColor: "var(--accent)", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+        <style>{`
+          @keyframes prShimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+          }
+        `}</style>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: "16px 0" }}>
+          {/* Header skeleton */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ ...s, width: 48, height: 48, borderRadius: "50%" }} />
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+              <div style={{ ...s, width: "40%", height: 14 }} />
+              <div style={{ ...s, width: "25%", height: 11 }} />
+            </div>
+          </div>
+          {/* Summary block skeleton */}
+          <div style={{ background: "#181a20", borderRadius: 12, padding: 20, border: "1px solid rgba(255,255,255,0.05)", display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ ...s, width: "45%", height: 12 }} />
+            <div style={{ ...s, width: "55%", height: 28 }} />
+            <div style={{ display: "flex", gap: 24 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <div style={{ ...s, width: 80, height: 11 }} />
+                <div style={{ ...s, width: 60, height: 14 }} />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <div style={{ ...s, width: 60, height: 11 }} />
+                <div style={{ ...s, width: 30, height: 14 }} />
+              </div>
+            </div>
+          </div>
+          {/* Card skeletons */}
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} style={{ background: "#181a20", borderRadius: 12, padding: 16, border: "1px solid rgba(255,255,255,0.03)", display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ ...s, width: 32, height: 32, borderRadius: 8, flexShrink: 0 }} />
+                <div style={{ ...s, width: "40%", height: 14 }} />
+                <div style={{ ...s, width: "14%", height: 18, borderRadius: 4 }} />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                {[0, 1, 2].map(j => (
+                  <div key={j} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <div style={{ ...s, width: "70%", height: 11 }} />
+                    <div style={{ ...s, width: "55%", height: 14 }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </Shell>
     );
@@ -75,6 +129,8 @@ export default function App() {
         <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
         <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
         <Route path="/bots" element={<ProtectedRoute><Bots /></ProtectedRoute>} />
+        <Route path="/my-bots" element={<ProtectedRoute><MyBots /></ProtectedRoute>} />
+        <Route path="/assets" element={<ProtectedRoute><Assets /></ProtectedRoute>} />
         <Route path="/payment/return" element={<ProtectedRoute><PaymentReturn /></ProtectedRoute>} />
         <Route path="/payment/cancel" element={<ProtectedRoute><PaymentCancel /></ProtectedRoute>} />
         <Route path="/movies" element={<Movies />} />

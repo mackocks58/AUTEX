@@ -70,14 +70,39 @@ export default function Register() {
       
       const newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
       
-      await set(ref(db, `users/${cred.user.uid}`), {
+      const userPayload: any = {
         displayName,
         usernameLowercase: displayName.toLowerCase(),
         phone: `+255${phone.replace(/\D/g, "")}`,
         email: generatedEmail,
         affiliateCode: newCode,
         createdAt: Date.now()
-      });
+      };
+
+      const refCode = params.get("ref");
+      let referrerUid = null;
+
+      if (refCode) {
+        // Find referrer by affiliate code
+        const refQuery = query(ref(db, "users"), orderByChild("affiliateCode"), equalTo(refCode));
+        const refSnap = await get(refQuery);
+        if (refSnap.exists()) {
+          // get the first matching user's UID
+          const referrers = refSnap.val();
+          referrerUid = Object.keys(referrers)[0];
+          userPayload.referredBy = referrerUid;
+        }
+      }
+      
+      await set(ref(db, `users/${cred.user.uid}`), userPayload);
+
+      // Record in referrals tree if referrer found
+      if (referrerUid && refCode) {
+        await set(ref(db, `referrals/${refCode}/${cred.user.uid}`), {
+          displayName,
+          createdAt: Date.now()
+        });
+      }
 
       nav("/");
     } catch (err: unknown) {

@@ -40,15 +40,17 @@ function getStatus(s: string) {
 }
 
 function isPositive(type: string) {
-  return ["deposit", "bonus", "welcome_bonus", "refund", "credit"].includes(type.toLowerCase());
+  return ["deposit", "bonus", "welcome_bonus", "refund", "credit", "bot_income", "commission"].includes(type.toLowerCase());
 }
 
 function isBonus(type: string) {
-  return ["bonus", "welcome_bonus"].includes(type.toLowerCase());
+  return ["bonus", "welcome_bonus", "bot_income", "commission"].includes(type.toLowerCase());
 }
 
 function txLabel(type: string) {
   if (type.toLowerCase() === "welcome_bonus") return "Welcome Bonus";
+  if (type.toLowerCase() === "bot_income") return "Bot Income";
+  if (type.toLowerCase() === "commission") return "Referral Commission";
   return type.charAt(0).toUpperCase() + type.slice(1).replace(/_/g, " ");
 }
 
