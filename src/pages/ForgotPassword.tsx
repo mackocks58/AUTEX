@@ -17,7 +17,7 @@ export default function ForgotPassword() {
     setError(null);
     setSuccess(false);
     try {
-      const generatedEmail = `+255${phone.replace(/\D/g, "")}@mfalmewamikeka.com`;
+      const generatedEmail = `+255${phone.replace(/\D/g, "")}@autex.com`;
       await sendPasswordResetEmail(auth, generatedEmail);
       setSuccess(true);
       setPhone("");

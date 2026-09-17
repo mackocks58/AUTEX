@@ -1,6 +1,53 @@
 import { useState, useEffect } from "react";
-import { ref, onValue, update, get } from "firebase/database";
+import { ref, onValue, update, get, push } from "firebase/database";
 import { db } from "@/firebase";
+
+// ── Inline copy button with tick feedback ──
+function CopyBtn({ text, label }: { text: string; label?: string }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      /* ignore */ 
+    }
+  };
+  return (
+    <button
+      onClick={handleCopy}
+      title={`Copy ${label ?? text}`}
+      style={{
+        display: "inline-flex", alignItems: "center", gap: 4,
+        background: copied ? "rgba(16,185,129,0.15)" : "rgba(255,255,255,0.06)",
+        border: copied ? "1px solid rgba(16,185,129,0.4)" : "1px solid rgba(255,255,255,0.12)",
+        borderRadius: 6, padding: "2px 8px", cursor: "pointer",
+        fontSize: 11, fontWeight: 600,
+        color: copied ? "#10b981" : "#94a3b8",
+        transition: "all 0.2s ease", lineHeight: 1.6,
+        whiteSpace: "nowrap",
+      }}
+    >
+      {copied ? (
+        <>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          Copied!
+        </>
+      ) : (
+        <>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
+          {label ?? "Copy"}
+        </>
+      )}
+    </button>
+  );
+}
 
 type Payment = {
   id: string;
@@ -12,9 +59,9 @@ type Payment = {
   status: string;
   createdAt: number;
   description: string;
-  reference: string;
   method?: string;
   network?: string;
+  accountName?: string;
 };
 
 export function AdminWithdraws() {
@@ -52,6 +99,7 @@ export function AdminWithdraws() {
                   reference: p.reference || "",
                   method: p.method,
                   network: p.network,
+                  accountName: p.accountName,
                 });
               }
             });
@@ -77,10 +125,20 @@ export function AdminWithdraws() {
 
     try {
       const updates: any = {};
+      const newNotifKey = push(ref(db, `userNotifications/${payment.uid}`)).key;
       
       if (type === "approve") {
         // Balance was already deducted when they requested the withdraw.
         updates[`users/${payment.uid}/payments/${payment.id}/status`] = "completed";
+        
+        if (newNotifKey) {
+          updates[`userNotifications/${payment.uid}/${newNotifKey}`] = {
+            title: "Withdrawal Processed",
+            message: `Your withdrawal of $${Number(payment.amount).toFixed(2)} to ${payment.reference || payment.description} has been successfully processed and sent.`,
+            type: "activity",
+            createdAt: Date.now()
+          };
+        }
       } else {
         // Rejecting means we must refund the user's balance
         const userRef = ref(db, `users/${payment.uid}`);
@@ -93,6 +151,15 @@ export function AdminWithdraws() {
 
         updates[`users/${payment.uid}/payments/${payment.id}/status`] = "failed";
         updates[`users/${payment.uid}/balance`] = newBalance;
+        
+        if (newNotifKey) {
+          updates[`userNotifications/${payment.uid}/${newNotifKey}`] = {
+            title: "Withdrawal Rejected",
+            message: `Your withdrawal request of $${Number(payment.amount).toFixed(2)} has been rejected and the funds have been refunded to your account balance.`,
+            type: "activity",
+            createdAt: Date.now()
+          };
+        }
       }
 
       await update(ref(db), updates);
@@ -147,14 +214,26 @@ export function AdminWithdraws() {
                       {p.createdAt ? new Date(p.createdAt).toLocaleString() : "-"}
                     </td>
                     <td style={{ padding: 12 }}>
-                      <div style={{ fontWeight: 600 }}>{p.email}</div>
-                      <div style={{ fontSize: 12, color: "var(--muted)", fontFamily: "monospace" }}>{p.uid.slice(0, 8)}...</div>
+                      <div style={{ fontWeight: 600, marginBottom: 4 }}>{p.email}</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                        <span style={{ fontSize: 12, color: "var(--muted)", fontFamily: "monospace" }}>{p.uid.slice(0, 8)}...</span>
+                        <CopyBtn text={p.email} label="Email" />
+                      </div>
                     </td>
                     <td style={{ padding: 12 }}>
                       <div style={{ fontSize: 14 }}>{p.description}</div>
                     </td>
-                    <td style={{ padding: 12, fontFamily: "monospace", fontSize: 13, color: "var(--muted)" }}>
-                      {p.reference || "-"}
+                    <td style={{ padding: 12, fontSize: 13 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", marginBottom: 4 }}>
+                        <span style={{ fontFamily: "monospace", color: "var(--muted)" }}>{p.reference || "-"}</span>
+                        {p.reference && <CopyBtn text={p.reference} label="Number" />}
+                      </div>
+                      {p.accountName && (
+                        <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                          <span style={{ color: "#e2e8f0", fontWeight: 500, fontFamily: "'Inter', sans-serif" }}>📋 {p.accountName}</span>
+                          <CopyBtn text={p.accountName} label="Name" />
+                        </div>
+                      )}
                     </td>
                     <td style={{ padding: 12, fontWeight: 700, color: "var(--accent)" }}>
                       ${Number(p.amount).toFixed(2)}

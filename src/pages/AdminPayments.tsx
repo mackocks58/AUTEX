@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ref, onValue, update, get } from "firebase/database";
+import { ref, onValue, update, get, push } from "firebase/database";
 import { db } from "@/firebase";
 
 type Payment = {
@@ -77,6 +77,7 @@ export function AdminPayments() {
 
     try {
       const updates: any = {};
+      const newNotifKey = push(ref(db, `userNotifications/${payment.uid}`)).key;
       
       if (type === "approve") {
         const userRef = ref(db, `users/${payment.uid}`);
@@ -89,8 +90,28 @@ export function AdminPayments() {
 
         updates[`users/${payment.uid}/payments/${payment.id}/status`] = "completed";
         updates[`users/${payment.uid}/balance`] = newBalance;
+        
+        // Push notification
+        if (newNotifKey) {
+          updates[`userNotifications/${payment.uid}/${newNotifKey}`] = {
+            title: "Deposit Successful",
+            message: `Your deposit of $${Number(payment.amount).toFixed(2)} via ${payment.description} has been approved and credited to your balance.`,
+            type: "activity",
+            createdAt: Date.now()
+          };
+        }
       } else {
         updates[`users/${payment.uid}/payments/${payment.id}/status`] = "failed";
+        
+        // Push notification
+        if (newNotifKey) {
+          updates[`userNotifications/${payment.uid}/${newNotifKey}`] = {
+            title: "Deposit Rejected",
+            message: `Your deposit request of $${Number(payment.amount).toFixed(2)} via ${payment.description} has been rejected. Please contact support if you believe this is an error.`,
+            type: "activity",
+            createdAt: Date.now()
+          };
+        }
       }
 
       await update(ref(db), updates);

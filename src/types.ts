@@ -37,6 +37,7 @@ export type AppNotification = {
   message: string;
   imageUrl?: string;
   createdAt: number;
+  type?: "system" | "activity";
 };
 
 export type MovieGroup = {

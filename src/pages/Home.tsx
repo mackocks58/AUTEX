@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { Shell } from "@/components/Shell";
 import { useAuth } from "@/context/AuthContext";
 import { ref, onValue, set } from "firebase/database";
@@ -1048,14 +1048,47 @@ export default function Home() {
           Market Overview
         </h1>
         {user && (
-          <div style={{
-            display: "flex", alignItems: "center", gap: 10,
-            background: "rgba(16, 185, 129, 0.15)",
-            padding: "8px 18px",
-            borderRadius: 20,
-            border: "1px solid rgba(16, 185, 129, 0.3)",
-            boxShadow: "0 4px 12px rgba(16, 185, 129, 0.15)"
-          }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <Link 
+              to="/withdraw"
+              style={{
+                textDecoration: "none",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                background: "linear-gradient(135deg, #fb923c 0%, #ea580c 100%)",
+                color: "#ffffff",
+                padding: "8px 16px",
+                borderRadius: 20,
+                border: "none",
+                fontWeight: 700,
+                fontSize: 14,
+                boxShadow: "0 4px 12px rgba(234, 88, 12, 0.25)",
+                transition: "all 0.2s ease"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = "0 6px 16px rgba(234, 88, 12, 0.4)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "none";
+                e.currentTarget.style.boxShadow = "0 4px 12px rgba(234, 88, 12, 0.25)";
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 5v14M19 12l-7 7-7-7" />
+              </svg>
+              Withdraw
+            </Link>
+
+            <div style={{
+              display: "flex", alignItems: "center", gap: 10,
+              background: "rgba(16, 185, 129, 0.15)",
+              padding: "8px 18px",
+              borderRadius: 20,
+              border: "1px solid rgba(16, 185, 129, 0.3)",
+              boxShadow: "0 4px 12px rgba(16, 185, 129, 0.15)"
+            }}>
             <div style={{ display: "flex", alignItems: "center", color: "#10b981", fontWeight: 800, fontSize: 16 }}>
               <span style={{ fontSize: 11, color: "#34d399", marginRight: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Balance</span>
               ${showBalance ? balance.toFixed(2) : "***"}
@@ -1080,6 +1113,7 @@ export default function Home() {
                 </svg>
               )}
             </button>
+          </div>
           </div>
         )}
       </div>

@@ -19,7 +19,7 @@ export default function Login() {
     setBusy(true);
     setError(null);
     try {
-      const generatedEmail = `+255${phone.replace(/\D/g, "")}@mfalmewamikeka.com`;
+      const generatedEmail = `+255${phone.replace(/\D/g, "")}@autex.com`;
       await signInWithEmailAndPassword(auth, generatedEmail, password);
       nav("/");
     } catch (err: unknown) {

@@ -63,7 +63,7 @@ export default function Register() {
     setBusy(true);
     setError(null);
     try {
-      const generatedEmail = `+255${phone.replace(/\D/g, "")}@mfalmewamikeka.com`;
+      const generatedEmail = `+255${phone.replace(/\D/g, "")}@autex.com`;
       const cred = await createUserWithEmailAndPassword(auth, generatedEmail, password);
       const displayName = name.trim();
       await updateProfile(cred.user, { displayName });

@@ -5,6 +5,8 @@ import { onValue, ref } from "firebase/database";
 import { db } from "@/firebase";
 import { Navbar } from "./Navbar";
 import { BottomNav } from "./BottomNav";
+import { AppSidebar } from "./AppSidebar";
+import { SidebarProvider } from "@/context/SidebarContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
 
@@ -329,38 +331,41 @@ export function Shell({ children }: { children: ReactNode }) {
   const isBlocked = settingsLoaded && !authLoading && maintenance.maintenanceMode && !isAdmin;
 
   return (
-    <div className="shell">
-      
-      <NetworkDetector />
-      {/* Full-screen maintenance block for non-admin users */}
-      {isBlocked && <MaintenanceScreen message={maintenance.maintenanceMessage} />}
+    <SidebarProvider>
+      <div className="shell">
+        
+        <NetworkDetector />
+        {/* Full-screen maintenance block for non-admin users */}
+        {isBlocked && <MaintenanceScreen message={maintenance.maintenanceMessage} />}
 
-      <Navbar />
+        <AppSidebar />
+        <Navbar />
 
-      {/* Subtle maintenance banner for admins — so they know it's active */}
-      {maintenance.maintenanceMode && isAdmin && (
-        <div style={{
-          background: "rgba(234,179,8,0.15)",
-          borderBottom: "1px solid rgba(250,204,21,0.35)",
-          padding: "8px 16px",
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          fontSize: 12,
-          color: "#fde047",
-          fontWeight: 700,
-        }}>
-          <span>🔧</span>
-          <span>Maintenance mode is ON — only you (admin) can see this. Users are blocked.</span>
-          <a href="/admin" style={{ color: "#facc15", marginLeft: "auto", textDecoration: "underline" }}>
-            Manage →
-          </a>
-        </div>
-      )}
+        {/* Subtle maintenance banner for admins — so they know it's active */}
+        {maintenance.maintenanceMode && isAdmin && (
+          <div style={{
+            background: "rgba(234,179,8,0.15)",
+            borderBottom: "1px solid rgba(250,204,21,0.35)",
+            padding: "8px 16px",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            fontSize: 12,
+            color: "#fde047",
+            fontWeight: 700,
+          }}>
+            <span>🔧</span>
+            <span>Maintenance mode is ON — only you (admin) can see this. Users are blocked.</span>
+            <a href="/admin" style={{ color: "#facc15", marginLeft: "auto", textDecoration: "underline" }}>
+              Manage →
+            </a>
+          </div>
+        )}
 
-      {children}
-      <BottomNav />
-    </div>
+        {children}
+        <BottomNav />
+      </div>
+    </SidebarProvider>
   );
 }
 

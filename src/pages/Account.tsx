@@ -61,8 +61,8 @@ export default function Account() {
 
   const firstName = (user.displayName || user.email?.split("@")[0] || "User").split(" ")[0];
 
-  const displayPhone = user.email?.endsWith("@mfalmewamikeka.com") 
-    ? user.email.replace("@mfalmewamikeka.com", "") 
+  const displayPhone = user.email?.endsWith("@autex.com") 
+    ? user.email.replace("@autex.com", "") 
     : user.email;
 
   return (
