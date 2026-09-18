@@ -1055,14 +1055,14 @@ export default function Home() {
                 textDecoration: "none",
                 display: "flex",
                 alignItems: "center",
-                gap: 6,
+                gap: 4,
                 background: "linear-gradient(135deg, #fb923c 0%, #ea580c 100%)",
                 color: "#ffffff",
-                padding: "8px 16px",
+                padding: "6px 12px",
                 borderRadius: 20,
                 border: "none",
                 fontWeight: 700,
-                fontSize: 14,
+                fontSize: 13,
                 boxShadow: "0 4px 12px rgba(234, 88, 12, 0.25)",
                 transition: "all 0.2s ease"
               }}
@@ -1075,22 +1075,22 @@ export default function Home() {
                 e.currentTarget.style.boxShadow = "0 4px 12px rgba(234, 88, 12, 0.25)";
               }}
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 5v14M19 12l-7 7-7-7" />
               </svg>
               Withdraw
             </Link>
 
             <div style={{
-              display: "flex", alignItems: "center", gap: 10,
+              display: "flex", alignItems: "center", gap: 6,
               background: "rgba(16, 185, 129, 0.15)",
-              padding: "8px 18px",
+              padding: "6px 12px",
               borderRadius: 20,
               border: "1px solid rgba(16, 185, 129, 0.3)",
               boxShadow: "0 4px 12px rgba(16, 185, 129, 0.15)"
             }}>
-            <div style={{ display: "flex", alignItems: "center", color: "#10b981", fontWeight: 800, fontSize: 16 }}>
-              <span style={{ fontSize: 11, color: "#34d399", marginRight: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Balance</span>
+            <div style={{ display: "flex", alignItems: "center", color: "#10b981", fontWeight: 800, fontSize: 14 }}>
+              <span style={{ fontSize: 10, color: "#34d399", marginRight: 4, textTransform: "uppercase", letterSpacing: "0.02em" }}>Balance</span>
               ${showBalance ? balance.toFixed(2) : "***"}
             </div>
             <button 
@@ -1102,12 +1102,12 @@ export default function Home() {
               }}
             >
               {showBalance ? (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                   <circle cx="12" cy="12" r="3"></circle>
                 </svg>
               ) : (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
                   <line x1="1" y1="1" x2="23" y2="23"></line>
                 </svg>

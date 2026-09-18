@@ -273,8 +273,8 @@ export default function Withdraw() {
     const isCrypto = tab === "binance";
     const amount = parseFloat(isCrypto ? cryptoAmount : mobileAmount);
 
-    if (isNaN(amount) || amount <= 0) {
-      setError("Please enter a valid amount.");
+    if (isNaN(amount) || amount < 10) {
+      setError("Minimum withdrawal amount is $10.");
       return;
     }
     if (amount > balance) {
@@ -491,7 +491,7 @@ export default function Withdraw() {
                         <label style={{ display: "block", fontSize: 13, color: "#848e9c", marginBottom: 8, fontWeight: 500 }}>Withdrawal Amount (USD)</label>
                         <div style={{ position: "relative" }}>
                           <input
-                            type="number" step="0.01" min="0" required max={balance}
+                            type="number" step="0.01" min="10" required max={balance}
                             value={cryptoAmount} onChange={e => setCryptoAmount(e.target.value)}
                             placeholder="0.00"
                             style={{ width: "100%", background: "#1e2329", border: "1px solid #2b3139", borderRadius: 8, padding: "14px 16px", color: "#fff", fontSize: 16, outline: "none" }}
@@ -545,7 +545,7 @@ export default function Withdraw() {
                         <label style={{ display: "block", fontSize: 13, color: "#848e9c", marginBottom: 8, fontWeight: 500 }}>Withdrawal Amount (USD)</label>
                         <div style={{ position: "relative" }}>
                           <input
-                            type="number" step="0.01" min="0" required max={balance}
+                            type="number" step="0.01" min="10" required max={balance}
                             value={mobileAmount} onChange={e => setMobileAmount(e.target.value)}
                             placeholder="0.00"
                             style={{ width: "100%", background: "#1e2329", border: "1px solid #2b3139", borderRadius: 8, padding: "14px 16px", color: "#fff", fontSize: 16, outline: "none" }}
