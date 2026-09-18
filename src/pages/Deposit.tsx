@@ -4,7 +4,7 @@ import { db } from "@/firebase";
 import { useAuth } from "@/context/AuthContext";
 import { Navbar } from "@/components/Navbar";
 import { BottomNav } from "@/components/BottomNav";
-import { CheckCircle2, Copy, Wallet, Smartphone, AlertCircle } from "lucide-react";
+import { CheckCircle2, Copy, Wallet, Smartphone, AlertCircle, ShieldAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 type Tab = "binance" | "mobile";
@@ -29,6 +29,7 @@ export default function Deposit() {
   const [error, setError] = useState("");
   const [hasPending, setHasPending] = useState(false);
   const [checkingPending, setCheckingPending] = useState(true);
+  const [showConfirmSheet, setShowConfirmSheet] = useState(false);
 
   const [settingsLoading, setSettingsLoading] = useState(true);
   const [cryptoSettings, setCryptoSettings] = useState<Record<string, { enabled: boolean; address: string }>>({
@@ -82,34 +83,52 @@ export default function Deposit() {
     if (!enabledMobile.includes(mobileNetwork) && enabledMobile.length > 0) setMobileNetwork(enabledMobile[0]);
   }, [enabledMobile, mobileNetwork]);
 
+  // Auto-switch tab when settings load: if mobile is disabled but crypto is available, default to binance
+  useEffect(() => {
+    if (settingsLoading) return;
+    if (enabledMobile.length === 0 && enabledCrypto.length > 0) {
+      setTab("binance");
+    } else if (enabledMobile.length > 0) {
+      setTab("mobile");
+    }
+  }, [settingsLoading]);
+
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Step 1: validate inputs then open confirmation sheet
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    const isCrypto = tab === "binance";
+    const amount = parseFloat(isCrypto ? cryptoAmount : mobileAmount);
+    if (isNaN(amount) || amount <= 0) {
+      setError("Please enter a valid amount.");
+      return;
+    }
+    if (isCrypto && !txId.trim()) {
+      setError("Please enter the Transaction Hash (TxID).");
+      return;
+    }
+    if (!isCrypto && !receiptNo.trim()) {
+      setError("Please enter the Receipt Number.");
+      return;
+    }
+    setShowConfirmSheet(true);
+  };
+
+  // Step 2: user confirmed — do the actual Firebase write
+  const handleConfirmedSubmit = async () => {
     if (!user) return;
-    
+    setShowConfirmSheet(false);
     setError("");
     setSubmitting(true);
-    
     try {
       const isCrypto = tab === "binance";
       const amount = parseFloat(isCrypto ? cryptoAmount : mobileAmount);
-      
-      if (isNaN(amount) || amount <= 0) {
-        throw new Error("Please enter a valid amount.");
-      }
-      if (isCrypto && !txId.trim()) {
-        throw new Error("Please enter the Transaction Hash (TxID).");
-      }
-      if (!isCrypto && !receiptNo.trim()) {
-        throw new Error("Please enter the Receipt Number.");
-      }
-
       const paymentsRef = ref(db, `users/${user.uid}/payments`);
       const newTxRef = push(paymentsRef);
-      
       await set(newTxRef, {
         type: "deposit",
         amount: amount,
@@ -121,7 +140,6 @@ export default function Deposit() {
         network: isCrypto ? cryptoNetwork : mobileNetwork,
         method: isCrypto ? "crypto" : "mobile_money"
       });
-
       setSuccess(true);
       setTimeout(() => {
         navigate("/transactions");
@@ -230,7 +248,7 @@ export default function Deposit() {
               )}
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleFormSubmit}>
               {error && (
                 <div style={{ background: "rgba(246,70,93,0.1)", border: "1px solid rgba(246,70,93,0.4)", color: "#f6465d", padding: "12px 16px", borderRadius: 8, marginBottom: 24, fontSize: 13, display: "flex", gap: 8, alignItems: "flex-start" }}>
                   <AlertCircle size={16} style={{ flexShrink: 0, marginTop: 2 }} />
@@ -387,8 +405,104 @@ export default function Deposit() {
 
         <BottomNav />
       </div>
+
+      {/* ── Confirmation Bottom Sheet ── */}
+      {showConfirmSheet && (
+        <>
+          {/* Backdrop */}
+          <div
+            onClick={() => setShowConfirmSheet(false)}
+            style={{
+              position: "fixed", inset: 0, background: "rgba(0,0,0,0.65)",
+              zIndex: 1000, animation: "fadeBackdrop 0.25s ease"
+            }}
+          />
+          {/* Sheet */}
+          <div style={{
+            position: "fixed", bottom: 0, left: 0, right: 0,
+            background: "#1e2329",
+            borderRadius: "20px 20px 0 0",
+            padding: "28px 24px 40px",
+            zIndex: 1001,
+            animation: "slideUp 0.3s cubic-bezier(0.32,0.72,0,1)",
+            maxWidth: 500, margin: "0 auto",
+            boxShadow: "0 -8px 40px rgba(0,0,0,0.5)"
+          }}>
+            {/* Handle bar */}
+            <div style={{ width: 40, height: 4, background: "#2b3139", borderRadius: 99, margin: "0 auto 24px" }} />
+
+            {/* Warning icon */}
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
+              <div style={{
+                width: 64, height: 64, borderRadius: "50%",
+                background: "rgba(240,185,11,0.12)",
+                border: "1.5px solid rgba(240,185,11,0.35)",
+                display: "flex", alignItems: "center", justifyContent: "center"
+              }}>
+                <ShieldAlert size={30} color="#f0b90b" />
+              </div>
+            </div>
+
+            <h2 style={{ fontSize: 18, fontWeight: 700, color: "#fff", textAlign: "center", margin: "0 0 12px" }}>
+              Confirm Your Deposit
+            </h2>
+
+            {/* Warning box */}
+            <div style={{
+              background: "rgba(240,185,11,0.08)",
+              border: "1px solid rgba(240,185,11,0.25)",
+              borderRadius: 12, padding: "14px 16px", marginBottom: 20
+            }}>
+              <p style={{ color: "#f0b90b", fontSize: 13, fontWeight: 600, margin: "0 0 6px", display: "flex", alignItems: "center", gap: 6 }}>
+                <AlertCircle size={14} /> Important Notice
+              </p>
+              <p style={{ color: "#c9aa54", fontSize: 13, lineHeight: 1.6, margin: 0 }}>
+                Before submitting, please confirm that you have <strong style={{ color: "#fff" }}>already sent</strong> the exact amount to the account details provided above.
+              </p>
+              <p style={{ color: "#848e9c", fontSize: 12, lineHeight: 1.6, margin: "8px 0 0" }}>
+                Submitting this request without completing the transfer will result in delays or rejection of your deposit.
+              </p>
+            </div>
+
+            {/* Summary */}
+            <div style={{ background: "#2b3139", borderRadius: 10, padding: "12px 16px", marginBottom: 24, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ color: "#848e9c", fontSize: 13 }}>Amount</span>
+              <span style={{ color: "#f0b90b", fontSize: 16, fontWeight: 700 }}>
+                ${parseFloat(tab === "binance" ? cryptoAmount : mobileAmount).toFixed(2)} {tab === "binance" ? "USDT" : "USD"}
+              </span>
+            </div>
+
+            {/* Buttons */}
+            <button
+              onClick={handleConfirmedSubmit}
+              style={{
+                width: "100%", padding: "15px", borderRadius: 10,
+                background: "#f0b90b", color: "#0b0e11",
+                fontSize: 15, fontWeight: 700, border: "none",
+                cursor: "pointer", marginBottom: 12, transition: "opacity 0.2s"
+              }}
+            >
+              ✓ Yes, I've Transferred — Submit
+            </button>
+            <button
+              onClick={() => setShowConfirmSheet(false)}
+              style={{
+                width: "100%", padding: "14px", borderRadius: 10,
+                background: "transparent", color: "#848e9c",
+                fontSize: 15, fontWeight: 600,
+                border: "1px solid #2b3139", cursor: "pointer"
+              }}
+            >
+              Go Back &amp; Check
+            </button>
+          </div>
+        </>
+      )}
+
       <style>{`
         @keyframes fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes fadeBackdrop { from { opacity: 0; } to { opacity: 1; } }
       `}</style>
     </>
   );
