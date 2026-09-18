@@ -512,7 +512,7 @@ export default function Withdraw() {
                           type="text" required
                           value={cryptoAddress} onChange={e => setCryptoAddress(e.target.value)}
                           placeholder="Paste your address here"
-                          style={{ width: "100%", background: "#1e2329", border: "1px solid #2b3139", borderRadius: 8, padding: "14px 16px", color: "#fff", fontSize: 14, outline: "none", fontFamily: "'SF Mono', monospace" }}
+                          style={{ width: "100%", background: "#1e2329", border: "1px solid #2b3139", borderRadius: 8, padding: "14px 16px", color: "#fff", fontSize: 16, outline: "none", fontFamily: "'SF Mono', monospace" }}
                         />
                       </div>
                     </div>
@@ -566,7 +566,7 @@ export default function Withdraw() {
                           type="text" required
                           value={mobileAccount} onChange={e => setMobileAccount(e.target.value)}
                           placeholder="e.g. 077XXXXXXXX"
-                          style={{ width: "100%", background: "#1e2329", border: "1px solid #2b3139", borderRadius: 8, padding: "14px 16px", color: "#fff", fontSize: 14, outline: "none" }}
+                          style={{ width: "100%", background: "#1e2329", border: "1px solid #2b3139", borderRadius: 8, padding: "14px 16px", color: "#fff", fontSize: 16, outline: "none" }}
                         />
                       </div>
 
@@ -576,7 +576,7 @@ export default function Withdraw() {
                           type="text" required
                           value={mobileAccountName} onChange={e => setMobileAccountName(e.target.value)}
                           placeholder="Name registered to this account"
-                          style={{ width: "100%", background: "#1e2329", border: "1px solid #2b3139", borderRadius: 8, padding: "14px 16px", color: "#fff", fontSize: 14, outline: "none" }}
+                          style={{ width: "100%", background: "#1e2329", border: "1px solid #2b3139", borderRadius: 8, padding: "14px 16px", color: "#fff", fontSize: 16, outline: "none" }}
                         />
                       </div>
                     </div>

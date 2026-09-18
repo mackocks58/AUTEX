@@ -295,7 +295,7 @@ export default function Deposit() {
                       type="text" required
                       value={txId} onChange={e => setTxId(e.target.value)}
                       placeholder="Paste TxID here"
-                      style={{ width: "100%", background: "#1e2329", border: "1px solid #2b3139", borderRadius: 8, padding: "14px 16px", color: "#fff", fontSize: 14, outline: "none", fontFamily: "'SF Mono', monospace" }}
+                      style={{ width: "100%", background: "#1e2329", border: "1px solid #2b3139", borderRadius: 8, padding: "14px 16px", color: "#fff", fontSize: 16, outline: "none", fontFamily: "'SF Mono', monospace" }}
                     />
                   </div>
                 </div>
@@ -361,7 +361,7 @@ export default function Deposit() {
                       type="text" required
                       value={receiptNo} onChange={e => setReceiptNo(e.target.value)}
                       placeholder="e.g. PPXXXXXXXXX"
-                      style={{ width: "100%", background: "#1e2329", border: "1px solid #2b3139", borderRadius: 8, padding: "14px 16px", color: "#fff", fontSize: 14, outline: "none", textTransform: "uppercase" }}
+                      style={{ width: "100%", background: "#1e2329", border: "1px solid #2b3139", borderRadius: 8, padding: "14px 16px", color: "#fff", fontSize: 16, outline: "none", textTransform: "uppercase" }}
                     />
                   </div>
                 </div>

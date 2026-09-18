@@ -704,7 +704,7 @@ export default function Bots() {
                     border: `1px solid ${errorMsg ? "#ef4444" : "rgba(255,255,255,0.1)"}`,
                     borderRadius: 12,
                     color: "#fff",
-                    fontSize: 20,
+                    fontSize: 16,
                     fontWeight: 800,
                     outline: "none",
                     boxSizing: "border-box",
