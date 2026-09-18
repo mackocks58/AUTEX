@@ -17,7 +17,7 @@ export default function ForgotPassword() {
     setError(null);
     setSuccess(false);
     try {
-      const generatedEmail = `+255${phone.replace(/\D/g, "")}@autex.com`;
+      const generatedEmail = `+263${phone.replace(/\D/g, "")}@autex.com`;
       await sendPasswordResetEmail(auth, generatedEmail);
       setSuccess(true);
       setPhone("");
@@ -87,8 +87,8 @@ export default function ForgotPassword() {
               <label htmlFor="phone" style={{ color: "#fef08a", opacity: 0.9 }}>{t.phoneNumber}</label>
               <div style={{ position: "relative" }}>
                 <div style={{ position: "absolute", left: 16, top: 0, bottom: 0, display: "flex", alignItems: "center", gap: 6, pointerEvents: "none" }}>
-                  <img src="https://flagcdn.com/w20/tz.png" alt="TZ" style={{ width: 20, borderRadius: 2 }} />
-                  <span style={{ color: "var(--muted)", fontSize: 16, fontWeight: 500 }}>+255</span>
+                  <img src="https://flagcdn.com/w20/zw.png" alt="ZW" style={{ width: 20, borderRadius: 2 }} />
+                  <span style={{ color: "var(--muted)", fontSize: 16, fontWeight: 500 }}>+263</span>
                 </div>
                 <input
                   id="phone"
